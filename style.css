@@ -1,0 +1,66 @@
+body {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: repeat(12, 1fr);
+    height: 100vh;
+    margin: 0;
+    gap: 5px;
+    padding: 5px;
+    box-sizing: border-box;
+    background-color: #000;
+}
+
+div {
+    border-radius: 5px;
+    padding: 10px;
+    box-sizing: border-box;
+    color: #fff;
+}
+
+#prompt-bar {
+    grid-column: 10 / 13;
+    grid-row: 12 / 13;
+    background-image: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+}
+
+#character-image {
+    grid-column: 10 / 13;
+    grid-row: 1 / 12;
+    background-image: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);
+}
+
+#location-image {
+    grid-column: 4 / 10;
+    grid-row: 1 / 5;
+    background-image: linear-gradient(to right, #ff8177 0%, #ff867a 0%, #ff8c7f 21%, #f99185 52%, #cf556c 78%, #b12a5b 100%);
+}
+
+#npc-image {
+    grid-column: 1 / 4;
+    grid-row: 1 / 8;
+    background-image: linear-gradient(to top, #30cfd0 0%, #330867 100%);
+}
+
+#stats {
+    grid-column: 1 / 4;
+    grid-row: 8 / 13;
+    background-image: linear-gradient(to right, #43e97b 0%, #38f9d7 100%);
+}
+
+#intent-matrix {
+    grid-column: 4 / 6;
+    grid-row: 9 / 13;
+    background-image: linear-gradient(to top, #c471f5 0%, #fa71cd 100%);
+}
+
+#player-options {
+    grid-column: 6 / 10;
+    grid-row: 9 / 13;
+    background-image: linear-gradient(to right, #868f96 0%, #596164 100%);
+}
+
+#narrative-output {
+    grid-column: 4 / 10;
+    grid-row: 5 / 9;
+    background-image: linear-gradient(to right, #fa709a 0%, #fee140 100%);
+}

@@ -473,3 +473,126 @@ input:checked + .slider:before {
     background-color: #555;
     cursor: not-allowed;
 }
+
+/* --- Stats UI --- */
+#stats {
+    padding: 15px; /* Increased padding */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* Hide overflow to keep the layout clean */
+}
+
+.stats-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+    gap: 15px; /* Increased gap */
+}
+
+.horizontal-bars-container {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: 8px; /* Increased gap */
+    justify-content: space-between; /* Better distribution */
+}
+
+.stat-bar {
+    display: flex;
+    align-items: center;
+    position: relative; /* For tooltip positioning */
+}
+
+.stat-bar.horizontal {
+    flex-direction: row;
+    gap: 8px; /* Increased gap */
+}
+
+.stat-bar.vertical {
+    flex-direction: column;
+    justify-content: space-between; /* Pushes icon to bottom */
+    height: 100%;
+    gap: 8px; /* Increased gap */
+}
+
+.stat-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.bar-track {
+    background-color: #555;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.horizontal .bar-track {
+    width: 100%;
+    height: 15px;
+}
+
+.vertical .bar-track {
+    width: 15px;
+    height: 100%;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column-reverse; /* To make the fill go from bottom to top */
+}
+
+.bar-fill {
+    height: 100%;
+    width: 0%; /* Default to 0% fill */
+    border-radius: 10px;
+    transition: width 0.5s ease-in-out, height 0.5s ease-in-out;
+}
+
+.vertical .bar-fill {
+    width: 100%;
+    height: 0%; /* Default to 0% fill for vertical */
+}
+
+/* --- Stat-specific colors for the bar fill --- */
+#stat-vitality .bar-fill { background-color: #00B0F0; } /* Blue */
+#stat-will .bar-fill { background-color: #7030A0; }      /* Purple */
+#stat-nba .bar-fill { background-color: #FF1493; }       /* Pink */
+#stat-awareness .bar-fill { background-color: #FFA500; }  /* Orange */
+#stat-socialpressure .bar-fill { background-color: #FFFF00; }/* Yellow */
+#stat-grace .bar-fill { background-color: #E6B8B8; }    /* Light Pink */
+#stat-danger .bar-fill { background-color: #000000; }     /* Black */
+#stat-friendship .bar-fill { background-color: #00B050; }  /* Green */
+#stat-attraction .bar-fill { background-color: #FF0000; }   /* Red */
+#stat-temperature .bar-fill {
+    background-image: linear-gradient(to top, #00B0F0, #FF0000); /* Blue to Red */
+}
+
+
+/* --- Tooltip Styles --- */
+[data-tooltip] {
+    position: relative;
+}
+
+[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 110%; /* Position above the element */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.9em;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+    z-index: 10;
+}
+
+[data-tooltip]:hover::after {
+    opacity: 1;
+    visibility: visible;
+}

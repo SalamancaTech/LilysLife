@@ -35,9 +35,21 @@
             <h2>Settings</h2>
             <label for="font-select">Choose a font:</label>
             <select name="fonts" id="font-select">
-              <option value="system-ui">Default</option>
+              <option value="'Hachi Maru Pop', cursive">Hachi Maru Pop</option>
+              <option value="Georgia, serif">Georgia</option>
+              <option value="Arial, sans-serif">Arial</option>
+              <option value="'Courier New', monospace">Courier New</option>
               <option value="'Comic Sans MS', cursive">Comic Sans</option>
               <option value="'Lexend Deca', sans-serif">Lexend Deca</option>
+            </select>
+
+            <label for="font-size-select">Choose a font size:</label>
+            <select name="font-sizes" id="font-size-select">
+              <option value="6pt">Smallest</option>
+              <option value="9pt">Small</option>
+              <option value="12pt" selected>Normal</option>
+              <option value="15pt">Large</option>
+              <option value="18pt">Largest</option>
             </select>
 
             <div id="api-key-section">

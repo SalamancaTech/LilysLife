@@ -425,4 +425,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     updatePromptBarState();
+
+    // --- Initialize Stats with Placeholder Values ---
+    const stats = [
+        'stat-vitality', 'stat-will', 'stat-nba', 'stat-awareness',
+        'stat-socialpressure', 'stat-grace', 'stat-danger',
+        'stat-friendship', 'stat-attraction', 'stat-temperature'
+    ];
+
+    stats.forEach(stat => {
+        const randomValue = Math.floor(Math.random() * 101);
+        updateStatBar(stat, randomValue);
+    });
 });
+
+// --- Stats UI ---
+
+function updateStatBar(statId, value) {
+    const statBar = document.getElementById(statId);
+    if (statBar) {
+        const barFill = statBar.querySelector('.bar-fill');
+        if (barFill) {
+            const percentage = Math.max(0, Math.min(100, value)); // Clamp value between 0 and 100
+            if (statBar.classList.contains('vertical')) {
+                barFill.style.height = `${percentage}%`;
+            } else {
+                barFill.style.width = `${percentage}%`;
+            }
+        }
+    }
+}

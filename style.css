@@ -113,19 +113,19 @@ div {
 
 #intent-matrix { /* 6 */
     grid-column: 4 / 8;
-    grid-row: 8 / 13;
+    grid-row: 10 / 13;
     background-color: #ffffff; /* white */
 }
 
 #player-options { /* 7 */
     grid-column: 8 / 14;
-    grid-row: 8 / 13;
+    grid-row: 10 / 13;
     background-color: #808080; /* gray */
 }
 
 #narrative-output { /* 8 */
     grid-column: 4 / 14;
-    grid-row: 7 / 8;
+    grid-row: 7 / 10;
     background-color: #ff00ff; /* magenta */
 }
 

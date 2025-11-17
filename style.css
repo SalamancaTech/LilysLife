@@ -169,6 +169,14 @@ div {
     display: none; /* Hidden by default */
 }
 
+.settings-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
 /* Menu Open State */
 body.menu-open .hamburger-icon {
     display: none;

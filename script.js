@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Font Switching
     const fontSelect = document.getElementById('font-select');
     const fontSizeSelect = document.getElementById('font-size-select');
+    const glowToggle = document.getElementById('glow-toggle');
 
     // API Key Section
     const apiKeyInput = document.getElementById('api-key-input');
@@ -92,6 +93,14 @@ document.addEventListener('DOMContentLoaded', () => {
         body.style.fontSize = event.target.value;
     });
 
+    glowToggle.addEventListener('change', (event) => {
+        if (event.target.checked) {
+            body.classList.add('text-glow');
+        } else {
+            body.classList.remove('text-glow');
+        }
+    });
+
     // 4. API Key Visibility
     toggleApiKeyVisibilityButton.addEventListener('click', () => {
         const type = apiKeyInput.getAttribute('type') === 'password' ? 'text' : 'password';
@@ -157,4 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Font Initialisation ---
     body.style.fontFamily = fontSelect.value;
     body.style.fontSize = fontSizeSelect.value;
+    if (glowToggle.checked) {
+        body.classList.add('text-glow');
+    }
 });

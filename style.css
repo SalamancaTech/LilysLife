@@ -20,6 +20,8 @@ div {
     color: #000;
     font-weight: bold;
     text-align: center;
+    overflow-y: auto;
+    min-height: 0;
 }
 
 #menu-button {

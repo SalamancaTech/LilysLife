@@ -7,6 +7,15 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div id="menu-button">
+        <div class="hamburger-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="close-icon" style="display: none;">&times;</div>
+    </div>
+
     <div id="prompt-bar">Prompt Bar</div>
     <div id="character-image">Character Image</div>
     <div id="location-image">Location Image</div>
@@ -17,5 +26,28 @@
     <div id="narrative-output">Narrative Output</div>
     <div id="event_counter">Event Counter</div>
     <div id="segment_counter">Segment Counter</div>
+
+    <div id="menu-screen" class="hidden">
+        <div id="settings_module">
+            <h2>Settings</h2>
+            <label for="font-select">Choose a font:</label>
+            <select name="fonts" id="font-select">
+              <option value="system-ui">Default</option>
+              <option value="'Comic Sans MS', cursive">Comic Sans</option>
+              <option value="'Lexend Deca', sans-serif">Lexend Deca</option>
+            </select>
+        </div>
+    </div>
+    <div id="menu-options" class="hidden">
+        <div class="icon">🗺️</div>
+        <div class="icon">🎒</div>
+        <div class="icon">🧑‍🤝‍🧑</div>
+        <div class="icon">💰</div>
+        <div class="icon">📔</div>
+        <div class="icon">💾</div>
+        <div class="icon" id="settings-icon">⚙️</div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>

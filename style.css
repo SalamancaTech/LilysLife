@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Comic+Sans+MS&family=Lexend+Deca&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Comic+Sans+MS&family=Lexend+Deca&family=Hachi+Maru+Pop&display=swap');
 
 body {
     display: grid;
@@ -10,7 +10,6 @@ body {
     padding: 5px;
     box-sizing: border-box;
     background-color: #000;
-    font-family: system-ui, sans-serif;
 }
 
 div {

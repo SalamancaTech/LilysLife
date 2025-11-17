@@ -169,6 +169,14 @@ div {
     display: none; /* Hidden by default */
 }
 
+.settings-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
 /* Menu Open State */
 body.menu-open .hamburger-icon {
     display: none;
@@ -389,4 +397,78 @@ input:checked + .slider:before {
 .theme-white #menu-screen,
 .theme-white #menu-options {
     background-image: linear-gradient(to bottom right, #FFFFFF, #F5F5F5);
+}
+
+/* --- Save/Load Module Styles --- */
+
+#saveload_module {
+    color: white;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#new-game-button {
+    padding: 10px 20px;
+    font-size: 1.2em;
+    margin-bottom: 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    font-weight: bold;
+}
+
+#save-slots-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto; /* For scrolling if content overflows */
+    max-height: calc(100% - 70px); /* Adjust based on container padding and button height */
+}
+
+.save-slot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+}
+
+.slot-info {
+    flex-grow: 1;
+    text-align: left;
+}
+
+.save-name-input {
+    background: none;
+    border: 1px solid #ccc;
+    color: white;
+    font-size: 1.1em;
+    padding: 5px;
+    border-radius: 3px;
+    margin-bottom: 5px;
+}
+
+.timestamp, .presets {
+    margin: 2px 0;
+    font-size: 0.9em;
+    color: #ddd;
+}
+
+.slot-actions button {
+    margin-left: 10px;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.slot-actions button:disabled {
+    background-color: #555;
+    cursor: not-allowed;
 }

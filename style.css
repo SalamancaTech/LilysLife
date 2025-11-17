@@ -426,7 +426,7 @@ input:checked + .slider:before {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    overflow-y: auto; /* For scrolling if content overflows */
+    overflow-y: hidden; /* For scrolling if content overflows */
     max-height: calc(100% - 70px); /* Adjust based on container padding and button height */
 }
 

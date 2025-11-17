@@ -53,7 +53,6 @@ div {
 #prompt-bar { /* 1 */
     grid-column: 14 / 17;
     grid-row: 12 / 13;
-    background-color: #ff0000; /* red */
     display: flex;
     align-items: center;
     padding: 5px;
@@ -87,7 +86,6 @@ div {
 #character-image { /* 2 */
     grid-column: 14 / 17;
     grid-row: 1 / 12;
-    background-color: #ffa500; /* orange */
 }
 
 #location-image, #intent-matrix, #player-options, #event_counter, #segment_counter {
@@ -97,37 +95,31 @@ div {
 #location-image { /* 3 */
     grid-column: 4 / 11;
     grid-row: 1 / 7;
-    background-color: #ffff00; /* yellow */
 }
 
 #npc-image { /* 4 */
     grid-column: 1 / 4;
     grid-row: 1 / 8;
-    background-color: #00ff00; /* green */
 }
 
 #stats { /* 5 */
     grid-column: 1 / 4;
     grid-row: 8 / 13;
-    background-color: #00ffff; /* cyan */
 }
 
 #intent-matrix { /* 6 */
     grid-column: 4 / 8;
     grid-row: 10 / 13;
-    background-color: #ffffff; /* white */
 }
 
 #player-options { /* 7 */
     grid-column: 8 / 14;
     grid-row: 10 / 13;
-    background-color: #808080; /* gray */
 }
 
 #narrative-output { /* 8 */
     grid-column: 4 / 14;
     grid-row: 7 / 10;
-    background-color: #ff00ff; /* magenta */
     overflow-y: auto;
     word-wrap: break-word;
 }
@@ -135,14 +127,12 @@ div {
 #event_counter { /* 9 */
     grid-column: 11 / 14;
     grid-row: 4 / 7;
-    background-color: #0000ff; /* blue */
     color: #fff;
 }
 
 #segment_counter { /* 10 */
     grid-column: 11 / 14;
     grid-row: 1 / 4;
-    background-color: #ffc0cb; /* pink */
 }
 
 #menu-screen, #menu-options {
@@ -152,13 +142,11 @@ div {
 #menu-screen { /* 11 */
     grid-column: 4 / 14;
     grid-row: 2 / 12;
-    background-color: #808080; /* gray */
 }
 
 #menu-options { /* 12 */
     grid-column: 4 / 14;
     grid-row: 1 / 2;
-    background-color: #d3d3d3; /* light gray */
     justify-content: center;
     align-items: center;
 }
@@ -302,4 +290,39 @@ input:checked + .slider:before {
 
 .text-glow {
     text-shadow: 0 0 5px #f5f5f5, 0 0 10px #f5f5f5;
+}
+
+.toggle-label {
+    vertical-align: middle;
+    margin: 0 5px;
+}
+
+/* --- Theme: RGB (Original) --- */
+.theme-rgb #prompt-bar { background-color: #ff0000; }
+.theme-rgb #character-image { background-color: #ffa500; }
+.theme-rgb #location-image { background-color: #ffff00; }
+.theme-rgb #npc-image { background-color: #00ff00; }
+.theme-rgb #stats { background-color: #00ffff; }
+.theme-rgb #intent-matrix { background-color: #ffffff; }
+.theme-rgb #player-options { background-color: #808080; }
+.theme-rgb #narrative-output { background-color: #ff00ff; }
+.theme-rgb #event_counter { background-color: #0000ff; }
+.theme-rgb #segment_counter { background-color: #ffc0cb; }
+.theme-rgb #menu-screen { background-color: #808080; }
+.theme-rgb #menu-options { background-color: #d3d3d3; }
+
+/* --- Theme: Default (Gradient) --- */
+.theme-default #prompt-bar,
+.theme-default #character-image,
+.theme-default #location-image,
+.theme-default #npc-image,
+.theme-default #stats,
+.theme-default #intent-matrix,
+.theme-default #player-options,
+.theme-default #narrative-output,
+.theme-default #event_counter,
+.theme-default #segment_counter,
+.theme-default #menu-screen,
+.theme-default #menu-options {
+    background-image: linear-gradient(to top right, #2E36AA, #502688, #FC90AF);
 }

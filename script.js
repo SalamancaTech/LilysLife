@@ -46,6 +46,16 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('userSettings', JSON.stringify(settings));
     };
 
+    const applyTheme = (theme) => {
+        body.classList.remove('theme-default', 'theme-rgb'); // Add other theme classes here in the future
+        if (theme === 'Default') {
+            body.classList.add('theme-default');
+        } else if (theme === 'RGB') {
+            body.classList.add('theme-rgb');
+        }
+        // Add other theme conditions here
+    };
+
     const loadSettings = () => {
         const savedSettings = localStorage.getItem('userSettings');
         if (savedSettings) {
@@ -65,11 +75,13 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 body.classList.remove('text-glow');
             }
+            applyTheme(themeSelect.value);
         } else {
             // Default settings for first-time users
             body.style.fontFamily = fontSelect.value;
             body.style.fontSize = fontSizeSelect.value;
             body.classList.add('text-glow');
+            applyTheme('Default'); // Apply default theme
         }
     };
 
@@ -134,7 +146,10 @@ document.addEventListener('DOMContentLoaded', () => {
         saveSettings();
     });
 
-    themeSelect.addEventListener('change', saveSettings);
+    themeSelect.addEventListener('change', () => {
+        applyTheme(themeSelect.value);
+        saveSettings();
+    });
 
     fontSizeSelect.addEventListener('change', () => {
         body.style.fontSize = fontSizeSelect.value;

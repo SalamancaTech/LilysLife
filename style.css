@@ -478,7 +478,6 @@ input:checked + .slider:before {
 #stats {
     padding: 5px; /* Compact padding */
     display: flex;
-    overflow: hidden; /* Prevents scrolling */
 }
 
 .stats-container {

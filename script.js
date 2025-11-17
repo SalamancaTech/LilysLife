@@ -259,12 +259,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const getSaveSlots = () => {
         const slots = localStorage.getItem('saveSlots');
-        // Ensure we always have an array of 10 slots
+        // Ensure we always have an array of 5 slots
         let parsedSlots = slots ? JSON.parse(slots) : [];
-        while (parsedSlots.length < 10) {
+        while (parsedSlots.length < 5) {
             parsedSlots.push(null);
         }
-        return parsedSlots.slice(0, 10); // Ensure it's not more than 10
+        return parsedSlots.slice(0, 5); // Ensure it's not more than 5
     };
 
     const renderSaveSlots = () => {

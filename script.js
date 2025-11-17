@@ -47,13 +47,20 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const applyTheme = (theme) => {
-        body.classList.remove('theme-default', 'theme-rgb'); // Add other theme classes here in the future
+        body.classList.remove('theme-default', 'theme-rgb', 'theme-pink', 'theme-blue', 'theme-black', 'theme-white');
         if (theme === 'Default') {
             body.classList.add('theme-default');
         } else if (theme === 'RGB') {
             body.classList.add('theme-rgb');
+        } else if (theme === 'Pink') {
+            body.classList.add('theme-pink');
+        } else if (theme === 'Blue') {
+            body.classList.add('theme-blue');
+        } else if (theme === 'Black') {
+            body.classList.add('theme-black');
+        } else if (theme === 'White') {
+            body.classList.add('theme-white');
         }
-        // Add other theme conditions here
     };
 
     const loadSettings = () => {

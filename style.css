@@ -324,5 +324,69 @@ input:checked + .slider:before {
 .theme-default #segment_counter,
 .theme-default #menu-screen,
 .theme-default #menu-options {
-    background-image: linear-gradient(to top right, #2E36AA, #502688, #FC90AF);
+    background-image: linear-gradient(to bottom right, #2E36AA, #502688, #FC90AF);
+}
+
+/* --- Theme: Pink (Gradient) --- */
+.theme-pink #prompt-bar,
+.theme-pink #character-image,
+.theme-pink #location-image,
+.theme-pink #npc-image,
+.theme-pink #stats,
+.theme-pink #intent-matrix,
+.theme-pink #player-options,
+.theme-pink #narrative-output,
+.theme-pink #event_counter,
+.theme-pink #segment_counter,
+.theme-pink #menu-screen,
+.theme-pink #menu-options {
+    background-image: linear-gradient(to bottom right, #FFC0CB, #FF69B4, #C71585);
+}
+
+/* --- Theme: Blue (Gradient) --- */
+.theme-blue #prompt-bar,
+.theme-blue #character-image,
+.theme-blue #location-image,
+.theme-blue #npc-image,
+.theme-blue #stats,
+.theme-blue #intent-matrix,
+.theme-blue #player-options,
+.theme-blue #narrative-output,
+.theme-blue #event_counter,
+.theme-blue #segment_counter,
+.theme-blue #menu-screen,
+.theme-blue #menu-options {
+    background-image: linear-gradient(to bottom right, #ADD8E6, #4169E1, #00008B);
+}
+
+/* --- Theme: Black (Gradient) --- */
+.theme-black #prompt-bar,
+.theme-black #character-image,
+.theme-black #location-image,
+.theme-black #npc-image,
+.theme-black #stats,
+.theme-black #intent-matrix,
+.theme-black #player-options,
+.theme-black #narrative-output,
+.theme-black #event_counter,
+.theme-black #segment_counter,
+.theme-black #menu-screen,
+.theme-black #menu-options {
+    background-image: linear-gradient(to bottom right, #696969, #2F4F4F);
+}
+
+/* --- Theme: White (Gradient) --- */
+.theme-white #prompt-bar,
+.theme-white #character-image,
+.theme-white #location-image,
+.theme-white #npc-image,
+.theme-white #stats,
+.theme-white #intent-matrix,
+.theme-white #player-options,
+.theme-white #narrative-output,
+.theme-white #event_counter,
+.theme-white #segment_counter,
+.theme-white #menu-screen,
+.theme-white #menu-options {
+    background-image: linear-gradient(to bottom right, #FFFFFF, #F5F5F5);
 }

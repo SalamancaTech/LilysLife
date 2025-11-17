@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Comic+Sans+MS&family=Lexend+Deca&display=swap');
+
 body {
     display: grid;
     grid-template-columns: repeat(16, 1fr);
@@ -8,6 +10,7 @@ body {
     padding: 5px;
     box-sizing: border-box;
     background-color: #000;
+    font-family: system-ui, sans-serif;
 }
 
 div {
@@ -20,16 +23,74 @@ div {
     text-align: center;
 }
 
+#menu-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 100;
+    cursor: pointer;
+}
+
+.hamburger-icon {
+    display: block;
+}
+
+.hamburger-icon span {
+    display: block;
+    width: 35px;
+    height: 5px;
+    background-color: white;
+    margin: 6px 0;
+}
+
+.close-icon {
+    display: none;
+    color: white;
+    font-size: 40px;
+}
+
 #prompt-bar { /* 1 */
     grid-column: 14 / 17;
     grid-row: 12 / 13;
     background-color: #ff0000; /* red */
+    display: flex;
+    align-items: center;
+    padding: 5px;
+}
+
+#prompt-input {
+    flex-grow: 1;
+    height: 100%;
+    border: none;
+    border-radius: 5px;
+    padding: 0 10px;
+    font-size: 18px;
+}
+
+#send-prompt {
+    height: 100%;
+    margin-left: 5px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#prompt-input:disabled, #send-prompt:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
 }
 
 #character-image { /* 2 */
     grid-column: 14 / 17;
     grid-row: 1 / 12;
     background-color: #ffa500; /* orange */
+}
+
+#location-image, #intent-matrix, #player-options, #event_counter, #segment_counter {
+    display: block; /* Default state */
 }
 
 #location-image { /* 3 */
@@ -79,4 +140,159 @@ div {
     grid-column: 11 / 14;
     grid-row: 1 / 4;
     background-color: #ffc0cb; /* pink */
+}
+
+#menu-screen, #menu-options {
+    display: none; /* Hidden by default */
+}
+
+#menu-screen { /* 11 */
+    grid-column: 4 / 14;
+    grid-row: 2 / 12;
+    background-color: #808080; /* gray */
+}
+
+#menu-options { /* 12 */
+    grid-column: 4 / 14;
+    grid-row: 1 / 2;
+    background-color: #d3d3d3; /* light gray */
+    justify-content: center;
+    align-items: center;
+}
+
+.icon {
+    margin: 0 15px;
+    cursor: pointer;
+    font-size: 32px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease-in-out;
+}
+
+.icon:hover {
+    transform: scale(1.2);
+}
+
+#settings_module {
+    width: 100%;
+    color: white;
+    display: none; /* Hidden by default */
+}
+
+/* Menu Open State */
+body.menu-open .hamburger-icon {
+    display: none;
+}
+
+body.menu-open .close-icon {
+    display: block;
+}
+
+body.menu-open #location-image,
+body.menu-open #intent-matrix,
+body.menu-open #player-options,
+body.menu-open #event_counter,
+body.menu-open #segment_counter {
+    display: none;
+}
+
+body.menu-open #narrative-output {
+    grid-row: 12 / 13;
+    grid-column: 4 / 14;
+}
+
+body.menu-open #menu-screen,
+body.menu-open #menu-options {
+    display: flex;
+}
+
+body.menu-open #settings_module.active {
+    display: block;
+}
+
+#api-key-section {
+    margin-top: 20px;
+    padding: 10px 0;
+}
+
+.compact-api-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+#api-key-input {
+    width: 300px;
+    font-size: 16px;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    /* The visibility toggle is now a sibling, so no padding needed */
+}
+
+#toggle-api-key-visibility {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    padding: 0;
+    margin: 0;
+    line-height: 1; /* Aligns the icon better */
+}
+
+#storage-status {
+    font-size: 16px;
+    font-weight: normal;
+    color: white;
+    width: 70px; /* Give it a fixed width to prevent layout shifts */
+}
+
+#apply-api-key, #clear-api-key {
+    padding: 8px 15px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Toggle Switch Styles */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.toggle-switch input { display: none; }
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #4CAF50; /* Green for "Saved" */
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
 }

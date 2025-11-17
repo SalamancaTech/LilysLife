@@ -476,11 +476,9 @@ input:checked + .slider:before {
 
 /* --- Stats UI --- */
 #stats {
-    padding: 15px; /* Increased padding */
+    padding: 5px; /* Compact padding */
     display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden; /* Hide overflow to keep the layout clean */
+    overflow: hidden; /* Prevents scrolling */
 }
 
 .stats-container {
@@ -531,11 +529,11 @@ input:checked + .slider:before {
 
 .horizontal .bar-track {
     width: 100%;
-    height: 15px;
+    height: 18px; /* Taller bars */
 }
 
 .vertical .bar-track {
-    width: 15px;
+    width: 18px; /* Thicker bar */
     height: 100%;
     flex-grow: 1;
     display: flex;
@@ -595,4 +593,9 @@ input:checked + .slider:before {
 [data-tooltip]:hover::after {
     opacity: 1;
     visibility: visible;
+}
+
+/* Override the global div padding for all elements within the stats container */
+#stats div {
+    padding: 0;
 }

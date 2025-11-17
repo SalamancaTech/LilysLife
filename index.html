@@ -33,37 +33,50 @@
     <div id="menu-screen" class="hidden">
         <div id="settings_module">
             <h2>Settings</h2>
-            <label for="font-select">Choose a font:</label>
-            <select name="fonts" id="font-select">
-              <option value="'Hachi Maru Pop', cursive">Hachi Maru Pop</option>
-              <option value="Georgia, serif">Georgia</option>
-              <option value="Arial, sans-serif">Arial</option>
-              <option value="'Courier New', monospace">Courier New</option>
-              <option value="'Comic Sans MS', cursive">Comic Sans</option>
-              <option value="'Lexend Deca', sans-serif">Lexend Deca</option>
-            </select>
 
-            <label for="font-size-select">Choose a font size:</label>
-            <select name="font-sizes" id="font-size-select">
-              <option value="6pt">Smallest</option>
-              <option value="9pt">Small</option>
-              <option value="12pt" selected>Normal</option>
-              <option value="15pt">Large</option>
-              <option value="18pt">Largest</option>
-            </select>
+            <div class="settings-section">
+                <h3>Font</h3>
+                <label for="font-select">Choose a font:</label>
+                <select name="fonts" id="font-select">
+                  <option value="'Hachi Maru Pop', cursive">Hachi Maru Pop</option>
+                  <option value="Georgia, serif">Georgia</option>
+                  <option value="Arial, sans-serif">Arial</option>
+                  <option value="'Courier New', monospace">Courier New</option>
+                  <option value="'Comic Sans MS', cursive">Comic Sans</option>
+                  <option value="'Lexend Deca', sans-serif">Lexend Deca</option>
+                </select>
 
-            <div id="api-key-section">
-                <h3>Gemini API Key</h3>
-                <div class="compact-api-controls">
-                    <input type="password" id="api-key-input" placeholder="Enter your API key">
-                    <button id="toggle-api-key-visibility">👁️</button>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="api-key-storage-toggle">
-                        <span class="slider"></span>
-                    </label>
-                    <span id="storage-status">Unsaved</span>
-                    <button id="apply-api-key">Apply</button>
-                    <button id="clear-api-key">Clear</button>
+                <label for="font-size-select">Choose a font size:</label>
+                <select name="font-sizes" id="font-size-select">
+                  <option value="6pt">Smallest</option>
+                  <option value="9pt">Small</option>
+                  <option value="12pt" selected>Normal</option>
+                  <option value="15pt">Large</option>
+                  <option value="18pt">Largest</option>
+                </select>
+
+                <label for="glow-toggle">Glow:</label>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="glow-toggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="settings-section">
+                <h3>API</h3>
+                <div id="api-key-section">
+                    <h4>Gemini API Key</h4>
+                    <div class="compact-api-controls">
+                        <input type="password" id="api-key-input" placeholder="Enter your API key">
+                        <button id="toggle-api-key-visibility">👁️</button>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="api-key-storage-toggle">
+                            <span class="slider"></span>
+                        </label>
+                        <span id="storage-status">Unsaved</span>
+                        <button id="apply-api-key">Apply</button>
+                        <button id="clear-api-key">Clear</button>
+                    </div>
                 </div>
             </div>
         </div>

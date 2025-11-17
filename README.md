@@ -8,7 +8,7 @@ The main gameplay page is built with HTML and CSS. The structure is in `index.ht
 
 ### Layout
 
-The layout is based on a 12x12 CSS grid and consists of the following 8 boxes:
+The layout is based on a 16x12 CSS grid and consists of the following 10 boxes:
 
 -   `#prompt-bar`
 -   `#character-image`
@@ -18,3 +18,5 @@ The layout is based on a 12x12 CSS grid and consists of the following 8 boxes:
 -   `#intent-matrix`
 -   `#player-options`
 -   `#narrative-output`
+-   `#event_counter`
+-   `#segment_counter`

@@ -1,14 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Main Menu and Settings Elements
+    // --- Global State ---
+    let apiKey = null;
+
+    // --- DOM Elements ---
+    // Menu & Settings
     const menuButton = document.getElementById('menu-button');
     const body = document.body;
     const settingsIcon = document.getElementById('settings-icon');
     const settingsModule = document.getElementById('settings_module');
 
-    // Font Switching Elements
+    // Font Switching
     const fontSelect = document.getElementById('font-select');
 
-    // API Key Section Elements
+    // API Key Section
     const apiKeyInput = document.getElementById('api-key-input');
     const toggleApiKeyVisibilityButton = document.getElementById('toggle-api-key-visibility');
     const apiKeyStorageToggle = document.getElementById('api-key-storage-toggle');
@@ -16,17 +20,61 @@ document.addEventListener('DOMContentLoaded', () => {
     const applyApiKeyButton = document.getElementById('apply-api-key');
     const clearApiKeyButton = document.getElementById('clear-api-key');
 
+    // Prompt & Narrative
+    const promptInput = document.getElementById('prompt-input');
+    const sendPromptButton = document.getElementById('send-prompt');
+    const narrativeOutput = document.getElementById('narrative-output');
+
+    // --- Functions ---
+
+    const updatePromptBarState = (isBusy = false) => {
+        if (apiKey && !isBusy) {
+            promptInput.disabled = false;
+            sendPromptButton.disabled = false;
+            promptInput.placeholder = "Enter your prompt...";
+        } else {
+            promptInput.disabled = true;
+            sendPromptButton.disabled = true;
+            if (isBusy) {
+                promptInput.placeholder = "Thinking...";
+            } else {
+                promptInput.placeholder = "Please set your API key in the settings menu.";
+            }
+        }
+    };
+
+    const runQuery = async () => {
+        const prompt = promptInput.value.trim();
+        if (!prompt || !apiKey) {
+            return;
+        }
+
+        narrativeOutput.textContent = "Hmm, lemme think...";
+        updatePromptBarState(true); // Disable input while thinking
+
+        try {
+            const genAI = new window.GoogleGenerativeAI(apiKey);
+            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+            const result = await model.generateContent(prompt);
+            const response = await result.response;
+            const text = response.text();
+            narrativeOutput.textContent = text;
+        } catch (error) {
+            console.error("Error with Gemini API:", error);
+            narrativeOutput.textContent = `An error occurred: ${error.message}`;
+        } finally {
+            updatePromptBarState(false); // Re-enable input
+            promptInput.value = ''; // Clear input after sending
+        }
+    };
+
     // --- Event Listeners ---
 
-    // 1. Menu Toggle Functionality
+    // 1. Menu Toggle
     menuButton.addEventListener('click', () => {
         const isOpen = body.classList.contains('menu-open');
         body.classList.toggle('menu-open');
-
-        // If the menu is closing, also close the settings module
-        if (isOpen) {
-            settingsModule.classList.remove('active');
-        }
+        if (isOpen) settingsModule.classList.remove('active');
     });
 
     // 2. Settings Module Toggle
@@ -34,12 +82,12 @@ document.addEventListener('DOMContentLoaded', () => {
         settingsModule.classList.toggle('active');
     });
 
-    // 3. Font Switching Functionality
+    // 3. Font Switching
     fontSelect.addEventListener('change', (event) => {
         body.style.fontFamily = event.target.value;
     });
 
-    // 4. API Key Visibility Toggle
+    // 4. API Key Visibility
     toggleApiKeyVisibilityButton.addEventListener('click', () => {
         const type = apiKeyInput.getAttribute('type') === 'password' ? 'text' : 'password';
         apiKeyInput.setAttribute('type', type);
@@ -52,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 6. Apply API Key
     applyApiKeyButton.addEventListener('click', () => {
-        const apiKey = apiKeyInput.value;
+        apiKey = apiKeyInput.value.trim();
         if (apiKeyStorageToggle.checked) { // "Saved"
             localStorage.setItem('geminiApiKey', apiKey);
             sessionStorage.removeItem('geminiApiKey');
@@ -61,6 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.removeItem('geminiApiKey');
         }
         alert('API Key applied!');
+        updatePromptBarState();
     });
 
     // 7. Clear API Key
@@ -68,24 +117,35 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.removeItem('geminiApiKey');
         sessionStorage.removeItem('geminiApiKey');
         apiKeyInput.value = '';
+        apiKey = null;
         apiKeyStorageToggle.checked = false;
         storageStatus.textContent = 'Unsaved';
         alert('API Key cleared!');
+        updatePromptBarState();
+    });
+
+    // 8. Prompt Submission
+    sendPromptButton.addEventListener('click', runQuery);
+    promptInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            runQuery();
+        }
     });
 
     // --- Initial Page Load Logic ---
 
-    // Load API key from storage and set the toggle state
     const localKey = localStorage.getItem('geminiApiKey');
     const sessionKey = sessionStorage.getItem('geminiApiKey');
 
     if (localKey) {
+        apiKey = localKey;
         apiKeyInput.value = localKey;
         apiKeyStorageToggle.checked = true;
         storageStatus.textContent = 'Saved';
     } else if (sessionKey) {
+        apiKey = sessionKey;
         apiKeyInput.value = sessionKey;
-        apiKeyStorageToggle.checked = false;
-        storageStatus.textContent = 'Unsaved';
     }
+
+    updatePromptBarState();
 });

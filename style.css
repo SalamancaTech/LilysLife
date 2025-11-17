@@ -53,6 +53,34 @@ div {
     grid-column: 14 / 17;
     grid-row: 12 / 13;
     background-color: #ff0000; /* red */
+    display: flex;
+    align-items: center;
+    padding: 5px;
+}
+
+#prompt-input {
+    flex-grow: 1;
+    height: 100%;
+    border: none;
+    border-radius: 5px;
+    padding: 0 10px;
+    font-size: 18px;
+}
+
+#send-prompt {
+    height: 100%;
+    margin-left: 5px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#prompt-input:disabled, #send-prompt:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
 }
 
 #character-image { /* 2 */

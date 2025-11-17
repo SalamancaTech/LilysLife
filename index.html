@@ -36,67 +36,69 @@
 
             <div class="settings-section">
                 <h3>Theme</h3>
-                <label for="font-select">Choose a font:</label>
-                <select name="fonts" id="font-select">
-                  <option value="'Hachi Maru Pop', cursive">Hachi Maru Pop</option>
-                  <option value="Georgia, serif">Georgia</option>
-                  <option value="Arial, sans-serif">Arial</option>
-                  <option value="'Courier New', monospace">Courier New</option>
-                  <option value="'Comic Sans MS', cursive">Comic Sans</option>
-                  <option value="'Lexend Deca', sans-serif">Lexend Deca</option>
-                </select>
-                <br><br>
-                <label for="theme-select">Choose a style:</label>
-                <select name="themes" id="theme-select">
-                  <option value="Default" selected>Default</option>
-                  <option value="Pink">Pink</option>
-                  <option value="Blue">Blue</option>
-                  <option value="Black">Black</option>
-                  <option value="White">White</option>
-                  <option value="RGB">RGB</option>
-                  <option value="Trans">Trans</option>
-                  <option value="Black">Black</option>
-                  <option value="White">White</option>
-                  <option value="Cute">Cute</option>
-                  <option value="RGB">RGB</option>
-                  <option value="Colorblind">Colorblind</option>
-                </select>
-                <br><br>
-                <label for="font-size-select">Choose a font size:</label>
-                <select name="font-sizes" id="font-size-select">
-                  <option value="6pt">Smallest</option>
-                  <option value="9pt">Small</option>
-                  <option value="12pt" selected>Normal</option>
-                  <option value="15pt">Large</option>
-                  <option value="18pt">Largest</option>
-                </select>
-                <br><br>
-                <label for="glow-toggle">Glow:</label>
-                <label class="toggle-switch">
-                    <input type="checkbox" id="glow-toggle" checked>
-                    <span class="slider"></span>
-                </label>
+                <div class="settings-row">
+                    <label for="theme-select">Style:</label>
+                    <select name="themes" id="theme-select">
+                      <option value="Default" selected>Default</option>
+                      <option value="Pink">Pink</option>
+                      <option value="Blue">Blue</option>
+                      <option value="Black">Black</option>
+                      <option value="White">White</option>
+                      <option value="RGB">RGB</option>
+                      <option value="Trans">Trans</option>
+                      <option value="Black">Black</option>
+                      <option value="White">White</option>
+                      <option value="Cute">Cute</option>
+                      <option value="RGB">RGB</option>
+                      <option value="Colorblind">Colorblind</option>
+                    </select>
+
+                    <label for="font-select">Font:</label>
+                    <select name="fonts" id="font-select">
+                      <option value="'Hachi Maru Pop', cursive">Hachi Maru Pop</option>
+                      <option value="Georgia, serif">Georgia</option>
+                      <option value="Arial, sans-serif">Arial</option>
+                      <option value="'Courier New', monospace">Courier New</option>
+                      <option value="'Comic Sans MS', cursive">Comic Sans</option>
+                      <option value="'Lexend Deca', sans-serif">Lexend Deca</option>
+                    </select>
+
+                    <label for="font-size-select">Size:</label>
+                    <select name="font-sizes" id="font-size-select">
+                      <option value="6pt">Smallest</option>
+                      <option value="9pt">Small</option>
+                      <option value="12pt" selected>Normal</option>
+                      <option value="15pt">Large</option>
+                      <option value="18pt">Largest</option>
+                    </select>
+
+                    <label for="glow-toggle">Glow:</label>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="glow-toggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
             </div>
 
             <div class="settings-section">
                 <h3>Spiciness</h3>
-                <label for="events-toggle">Events:</label>
-                <span class="toggle-label">SFW only</span>
-                <label class="toggle-switch">
-                    <input type="checkbox" id="events-toggle">
-                    <span class="slider"></span>
-                </label>
-                <span class="toggle-label">ALL</span>
+                <div class="settings-row">
+                    <label for="events-toggle">Events:</label>
+                    <span class="toggle-label">SFW only</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="events-toggle">
+                        <span class="slider"></span>
+                    </label>
+                    <span class="toggle-label">ALL</span>
 
-                <br><br>
-
-                <label for="nsfw-level-toggle">NSFW Level:</label>
-                <span class="toggle-label">Light</span>
-                <label class="toggle-switch">
-                    <input type="checkbox" id="nsfw-level-toggle">
-                    <span class="slider"></span>
-                </label>
-                <span class="toggle-label">Full</span>
+                    <label for="nsfw-level-toggle">NSFW Level:</label>
+                    <span class="toggle-label">Light</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="nsfw-level-toggle">
+                        <span class="slider"></span>
+                    </label>
+                    <span class="toggle-label">Full</span>
+                </div>
             </div>
 
             <div class="settings-section">

@@ -8,6 +8,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const body = document.body;
     const settingsIcon = document.getElementById('settings-icon');
     const settingsModule = document.getElementById('settings_module');
+    const saveloadIcon = document.getElementById('saveload-icon');
+    const saveloadModule = document.getElementById('saveload_module');
+    const newGameButton = document.getElementById('new-game-button');
+    const saveSlotsContainer = document.getElementById('save-slots-container');
+
 
     // Font Switching
     const fontSelect = document.getElementById('font-select');
@@ -142,10 +147,195 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isOpen) settingsModule.classList.remove('active');
     });
 
-    // 2. Settings Module Toggle
+    // 2. Menu Navigation
     settingsIcon.addEventListener('click', () => {
-        settingsModule.classList.toggle('active');
+        settingsModule.style.display = 'block';
+        saveloadModule.style.display = 'none';
+        settingsModule.classList.add('active');
     });
+
+    saveloadIcon.addEventListener('click', () => {
+        settingsModule.style.display = 'none';
+        saveloadModule.style.display = 'block';
+        renderSaveSlots();
+    });
+
+    // --- Save/Load Functions ---
+    const getSaveData = () => {
+        return {
+            font: fontSelect.value,
+            theme: themeSelect.value,
+            fontSize: fontSizeSelect.value,
+            glow: glowToggle.checked,
+            events: eventsToggle.checked,
+            nsfwLevel: nsfwLevelToggle.checked,
+            timestamp: new Date().toLocaleString(),
+            // Placeholders for future data
+            preset1: 'DefaultPreset',
+            preset2: 'StandardPlay'
+        };
+    };
+
+    const saveGame = (slotIndex) => {
+        const saveData = getSaveData();
+        const saveSlots = getSaveSlots();
+
+        // Check if the slot is empty, if so, assign a default name.
+        if (!saveSlots[slotIndex]) {
+            saveSlots[slotIndex] = {}; // Initialize if null
+        }
+        if (!saveSlots[slotIndex].name) {
+            saveSlots[slotIndex].name = `Save Slot ${slotIndex + 1}`;
+        }
+
+        saveSlots[slotIndex].data = saveData;
+        localStorage.setItem('saveSlots', JSON.stringify(saveSlots));
+        renderSaveSlots();
+        alert(`Game saved to Slot ${slotIndex + 1}`);
+    };
+
+    const loadGame = (slotIndex) => {
+        const saveSlots = getSaveSlots();
+        const slot = saveSlots[slotIndex];
+        if (slot && slot.data) {
+            const settings = slot.data;
+            // Apply settings from the loaded data
+            fontSelect.value = settings.font;
+            themeSelect.value = settings.theme;
+            fontSizeSelect.value = settings.fontSize;
+            glowToggle.checked = settings.glow;
+            eventsToggle.checked = settings.events;
+            nsfwLevelToggle.checked = settings.nsfwLevel;
+
+            // Trigger the change events to update the UI
+            fontSelect.dispatchEvent(new Event('change'));
+            themeSelect.dispatchEvent(new Event('change'));
+            fontSizeSelect.dispatchEvent(new Event('change'));
+            glowToggle.dispatchEvent(new Event('change'));
+            eventsToggle.dispatchEvent(new Event('change'));
+            nsfwLevelToggle.dispatchEvent(new Event('change'));
+
+            alert(`Game loaded from Slot ${slotIndex + 1}`);
+        } else {
+            alert('No data to load from this slot.');
+        }
+    };
+
+    const deleteGame = (slotIndex) => {
+        if (confirm(`Are you sure you want to delete Save Slot ${slotIndex + 1}?`)) {
+            const saveSlots = getSaveSlots();
+            saveSlots[slotIndex] = null; // Clear the slot
+            localStorage.setItem('saveSlots', JSON.stringify(saveSlots));
+            renderSaveSlots();
+            alert(`Save Slot ${slotIndex + 1} deleted.`);
+        }
+    };
+
+    const copyGame = (slotIndex) => {
+        const saveSlots = getSaveSlots();
+        const sourceSlot = saveSlots[slotIndex];
+
+        if (!sourceSlot) {
+            alert('Cannot copy an empty slot.');
+            return;
+        }
+
+        const nextEmptySlotIndex = saveSlots.findIndex(slot => !slot);
+        if (nextEmptySlotIndex === -1) {
+            alert('No available slots to copy to.');
+            return;
+        }
+
+        // Deep copy of the data and a new name
+        const newSave = JSON.parse(JSON.stringify(sourceSlot));
+        newSave.name = `${sourceSlot.name} - COPY`;
+        newSave.data.timestamp = new Date().toLocaleString(); // Update timestamp on copy
+
+        saveSlots[nextEmptySlotIndex] = newSave;
+        localStorage.setItem('saveSlots', JSON.stringify(saveSlots));
+        renderSaveSlots();
+        alert(`Copied Slot ${slotIndex + 1} to Slot ${nextEmptySlotIndex + 1}.`);
+    };
+
+    const getSaveSlots = () => {
+        const slots = localStorage.getItem('saveSlots');
+        // Ensure we always have an array of 10 slots
+        let parsedSlots = slots ? JSON.parse(slots) : [];
+        while (parsedSlots.length < 10) {
+            parsedSlots.push(null);
+        }
+        return parsedSlots.slice(0, 10); // Ensure it's not more than 10
+    };
+
+    const renderSaveSlots = () => {
+        const slots = getSaveSlots();
+        saveSlotsContainer.innerHTML = ''; // Clear existing slots
+
+        slots.forEach((slot, index) => {
+            const slotEl = document.createElement('div');
+            slotEl.className = 'save-slot';
+
+            const isEmpty = !slot;
+            const slotName = isEmpty ? `Save Slot ${index + 1}` : slot.name;
+            const timestamp = isEmpty ? 'Empty' : slot.data.timestamp;
+            const preset1 = isEmpty ? 'N/A' : slot.data.preset1;
+            const preset2 = isEmpty ? 'N/A' : slot.data.preset2;
+
+            slotEl.innerHTML = `
+                <div class="slot-info">
+                    <input type="text" class="save-name-input" value="${slotName}" data-slot-index="${index}">
+                    <p class="timestamp">Timestamp: ${timestamp}</p>
+                    <p class="presets">Presets: ${preset1} / ${preset2}</p>
+                </div>
+                <div class="slot-actions">
+                    <button class="save-button" data-slot-index="${index}">Save</button>
+                    <button class="load-button" data-slot-index="${index}" ${isEmpty ? 'disabled' : ''}>Load</button>
+                    <button class="copy-button" data-slot-index="${index}" ${isEmpty ? 'disabled' : ''}>Copy</button>
+                    <button class="delete-button" data-slot-index="${index}" ${isEmpty ? 'disabled' : ''}>Delete</button>
+                </div>
+            `;
+            saveSlotsContainer.appendChild(slotEl);
+        });
+    };
+
+    // Event delegation for save slots container
+    saveSlotsContainer.addEventListener('click', (e) => {
+        const target = e.target;
+        const slotIndex = parseInt(target.dataset.slotIndex, 10);
+
+        if (target.classList.contains('save-button')) {
+            saveGame(slotIndex);
+        } else if (target.classList.contains('load-button')) {
+            loadGame(slotIndex);
+        } else if (target.classList.contains('delete-button')) {
+            deleteGame(slotIndex);
+        } else if (target.classList.contains('copy-button')) {
+            copyGame(slotIndex);
+        }
+    });
+
+    // Handler for editing save slot names
+    saveSlotsContainer.addEventListener('change', (e) => {
+        const target = e.target;
+        if (target.classList.contains('save-name-input')) {
+            const slotIndex = parseInt(target.dataset.slotIndex, 10);
+            const newName = target.value.trim();
+            if (newName) {
+                const saveSlots = getSaveSlots();
+                if (!saveSlots[slotIndex]) {
+                     saveSlots[slotIndex] = {}; // Initialize if it was empty
+                }
+                saveSlots[slotIndex].name = newName;
+                localStorage.setItem('saveSlots', JSON.stringify(saveSlots));
+                // No need to re-render, just update the data
+            } else {
+                // If the name is cleared, revert to the original value
+                const saveSlots = getSaveSlots();
+                target.value = saveSlots[slotIndex] ? saveSlots[slotIndex].name : `Save Slot ${slotIndex + 1}`;
+            }
+        }
+    });
+
 
     // 3. Settings Changes
     fontSelect.addEventListener('change', () => {

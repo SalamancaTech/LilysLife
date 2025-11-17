@@ -455,3 +455,17 @@ function updateStatBar(statId, value) {
         }
     }
 }
+
+// --- Initialize Stats with Placeholder Values ---
+document.addEventListener('DOMContentLoaded', () => {
+    const stats = [
+        'stat-vitality', 'stat-will', 'stat-nba', 'stat-awareness',
+        'stat-socialpressure', 'stat-grace', 'stat-danger',
+        'stat-friendship', 'stat-attraction', 'stat-temperature'
+    ];
+
+    stats.forEach(stat => {
+        const randomValue = Math.floor(Math.random() * 101);
+        updateStatBar(stat, randomValue);
+    });
+});

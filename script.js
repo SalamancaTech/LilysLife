@@ -11,14 +11,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // API Key Section Elements
     const apiKeyInput = document.getElementById('api-key-input');
     const toggleApiKeyVisibilityButton = document.getElementById('toggle-api-key-visibility');
-    const saveApiKeyButton = document.getElementById('save-api-key');
+    const apiKeyStorageToggle = document.getElementById('api-key-storage-toggle');
+    const storageStatus = document.getElementById('storage-status');
+    const applyApiKeyButton = document.getElementById('apply-api-key');
     const clearApiKeyButton = document.getElementById('clear-api-key');
 
     // --- Event Listeners ---
 
     // 1. Menu Toggle Functionality
     menuButton.addEventListener('click', () => {
+        const isOpen = body.classList.contains('menu-open');
         body.classList.toggle('menu-open');
+
+        // If the menu is closing, also close the settings module
+        if (isOpen) {
+            settingsModule.classList.remove('active');
+        }
     });
 
     // 2. Settings Module Toggle
@@ -37,34 +45,47 @@ document.addEventListener('DOMContentLoaded', () => {
         apiKeyInput.setAttribute('type', type);
     });
 
-    // 5. Save API Key
-    saveApiKeyButton.addEventListener('click', () => {
-        const storageOption = document.querySelector('input[name="storage-option"]:checked').value;
-        const apiKey = apiKeyInput.value;
-
-        if (storageOption === 'local') {
-            localStorage.setItem('geminiApiKey', apiKey);
-            sessionStorage.removeItem('geminiApiKey'); // Clear session storage if local is chosen
-        } else { // 'session'
-            sessionStorage.setItem('geminiApiKey', apiKey);
-            localStorage.removeItem('geminiApiKey'); // Clear local storage if session is chosen
-        }
-        alert('API Key saved!');
+    // 5. API Key Storage Toggle
+    apiKeyStorageToggle.addEventListener('change', () => {
+        storageStatus.textContent = apiKeyStorageToggle.checked ? 'Saved' : 'Unsaved';
     });
 
-    // 6. Clear API Key
+    // 6. Apply API Key
+    applyApiKeyButton.addEventListener('click', () => {
+        const apiKey = apiKeyInput.value;
+        if (apiKeyStorageToggle.checked) { // "Saved"
+            localStorage.setItem('geminiApiKey', apiKey);
+            sessionStorage.removeItem('geminiApiKey');
+        } else { // "Unsaved"
+            sessionStorage.setItem('geminiApiKey', apiKey);
+            localStorage.removeItem('geminiApiKey');
+        }
+        alert('API Key applied!');
+    });
+
+    // 7. Clear API Key
     clearApiKeyButton.addEventListener('click', () => {
         localStorage.removeItem('geminiApiKey');
         sessionStorage.removeItem('geminiApiKey');
         apiKeyInput.value = '';
+        apiKeyStorageToggle.checked = false;
+        storageStatus.textContent = 'Unsaved';
         alert('API Key cleared!');
     });
 
     // --- Initial Page Load Logic ---
 
-    // Load API key from storage if it exists
-    const savedKey = localStorage.getItem('geminiApiKey') || sessionStorage.getItem('geminiApiKey');
-    if (savedKey) {
-        apiKeyInput.value = savedKey;
+    // Load API key from storage and set the toggle state
+    const localKey = localStorage.getItem('geminiApiKey');
+    const sessionKey = sessionStorage.getItem('geminiApiKey');
+
+    if (localKey) {
+        apiKeyInput.value = localKey;
+        apiKeyStorageToggle.checked = true;
+        storageStatus.textContent = 'Saved';
+    } else if (sessionKey) {
+        apiKeyInput.value = sessionKey;
+        apiKeyStorageToggle.checked = false;
+        storageStatus.textContent = 'Unsaved';
     }
 });

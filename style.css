@@ -53,7 +53,6 @@ div {
 #prompt-bar { /* 1 */
     grid-column: 14 / 17;
     grid-row: 12 / 13;
-    background-color: #ff0000; /* red */
     display: flex;
     align-items: center;
     padding: 5px;
@@ -87,7 +86,6 @@ div {
 #character-image { /* 2 */
     grid-column: 14 / 17;
     grid-row: 1 / 12;
-    background-color: #ffa500; /* orange */
 }
 
 #location-image, #intent-matrix, #player-options, #event_counter, #segment_counter {
@@ -97,37 +95,31 @@ div {
 #location-image { /* 3 */
     grid-column: 4 / 11;
     grid-row: 1 / 7;
-    background-color: #ffff00; /* yellow */
 }
 
 #npc-image { /* 4 */
     grid-column: 1 / 4;
     grid-row: 1 / 8;
-    background-color: #00ff00; /* green */
 }
 
 #stats { /* 5 */
     grid-column: 1 / 4;
     grid-row: 8 / 13;
-    background-color: #00ffff; /* cyan */
 }
 
 #intent-matrix { /* 6 */
     grid-column: 4 / 8;
     grid-row: 10 / 13;
-    background-color: #ffffff; /* white */
 }
 
 #player-options { /* 7 */
     grid-column: 8 / 14;
     grid-row: 10 / 13;
-    background-color: #808080; /* gray */
 }
 
 #narrative-output { /* 8 */
     grid-column: 4 / 14;
     grid-row: 7 / 10;
-    background-color: #ff00ff; /* magenta */
     overflow-y: auto;
     word-wrap: break-word;
 }
@@ -135,14 +127,12 @@ div {
 #event_counter { /* 9 */
     grid-column: 11 / 14;
     grid-row: 4 / 7;
-    background-color: #0000ff; /* blue */
     color: #fff;
 }
 
 #segment_counter { /* 10 */
     grid-column: 11 / 14;
     grid-row: 1 / 4;
-    background-color: #ffc0cb; /* pink */
 }
 
 #menu-screen, #menu-options {
@@ -152,13 +142,11 @@ div {
 #menu-screen { /* 11 */
     grid-column: 4 / 14;
     grid-row: 2 / 12;
-    background-color: #808080; /* gray */
 }
 
 #menu-options { /* 12 */
     grid-column: 4 / 14;
     grid-row: 1 / 2;
-    background-color: #d3d3d3; /* light gray */
     justify-content: center;
     align-items: center;
 }
@@ -307,4 +295,98 @@ input:checked + .slider:before {
 .toggle-label {
     vertical-align: middle;
     margin: 0 5px;
+}
+
+/* --- Theme: RGB (Original) --- */
+.theme-rgb #prompt-bar { background-color: #ff0000; }
+.theme-rgb #character-image { background-color: #ffa500; }
+.theme-rgb #location-image { background-color: #ffff00; }
+.theme-rgb #npc-image { background-color: #00ff00; }
+.theme-rgb #stats { background-color: #00ffff; }
+.theme-rgb #intent-matrix { background-color: #ffffff; }
+.theme-rgb #player-options { background-color: #808080; }
+.theme-rgb #narrative-output { background-color: #ff00ff; }
+.theme-rgb #event_counter { background-color: #0000ff; }
+.theme-rgb #segment_counter { background-color: #ffc0cb; }
+.theme-rgb #menu-screen { background-color: #808080; }
+.theme-rgb #menu-options { background-color: #d3d3d3; }
+
+/* --- Theme: Default (Gradient) --- */
+.theme-default #prompt-bar,
+.theme-default #character-image,
+.theme-default #location-image,
+.theme-default #npc-image,
+.theme-default #stats,
+.theme-default #intent-matrix,
+.theme-default #player-options,
+.theme-default #narrative-output,
+.theme-default #event_counter,
+.theme-default #segment_counter,
+.theme-default #menu-screen,
+.theme-default #menu-options {
+    background-image: linear-gradient(to bottom right, #2E36AA, #502688, #FC90AF);
+}
+
+/* --- Theme: Pink (Gradient) --- */
+.theme-pink #prompt-bar,
+.theme-pink #character-image,
+.theme-pink #location-image,
+.theme-pink #npc-image,
+.theme-pink #stats,
+.theme-pink #intent-matrix,
+.theme-pink #player-options,
+.theme-pink #narrative-output,
+.theme-pink #event_counter,
+.theme-pink #segment_counter,
+.theme-pink #menu-screen,
+.theme-pink #menu-options {
+    background-image: linear-gradient(to bottom right, #FFC0CB, #FF69B4, #C71585);
+}
+
+/* --- Theme: Blue (Gradient) --- */
+.theme-blue #prompt-bar,
+.theme-blue #character-image,
+.theme-blue #location-image,
+.theme-blue #npc-image,
+.theme-blue #stats,
+.theme-blue #intent-matrix,
+.theme-blue #player-options,
+.theme-blue #narrative-output,
+.theme-blue #event_counter,
+.theme-blue #segment_counter,
+.theme-blue #menu-screen,
+.theme-blue #menu-options {
+    background-image: linear-gradient(to bottom right, #ADD8E6, #4169E1, #00008B);
+}
+
+/* --- Theme: Black (Gradient) --- */
+.theme-black #prompt-bar,
+.theme-black #character-image,
+.theme-black #location-image,
+.theme-black #npc-image,
+.theme-black #stats,
+.theme-black #intent-matrix,
+.theme-black #player-options,
+.theme-black #narrative-output,
+.theme-black #event_counter,
+.theme-black #segment_counter,
+.theme-black #menu-screen,
+.theme-black #menu-options {
+    background-image: linear-gradient(to bottom right, #696969, #2F4F4F);
+}
+
+/* --- Theme: White (Gradient) --- */
+.theme-white #prompt-bar,
+.theme-white #character-image,
+.theme-white #location-image,
+.theme-white #npc-image,
+.theme-white #stats,
+.theme-white #intent-matrix,
+.theme-white #player-options,
+.theme-white #narrative-output,
+.theme-white #event_counter,
+.theme-white #segment_counter,
+.theme-white #menu-screen,
+.theme-white #menu-options {
+    background-image: linear-gradient(to bottom right, #FFFFFF, #F5F5F5);
 }

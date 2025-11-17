@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Font Switching
     const fontSelect = document.getElementById('font-select');
+    const themeSelect = document.getElementById('theme-select');
     const fontSizeSelect = document.getElementById('font-size-select');
     const glowToggle = document.getElementById('glow-toggle');
 
@@ -36,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveSettings = () => {
         const settings = {
             font: fontSelect.value,
+            theme: themeSelect.value,
             fontSize: fontSizeSelect.value,
             glow: glowToggle.checked,
             events: eventsToggle.checked,
@@ -44,11 +46,29 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('userSettings', JSON.stringify(settings));
     };
 
+    const applyTheme = (theme) => {
+        body.classList.remove('theme-default', 'theme-rgb', 'theme-pink', 'theme-blue', 'theme-black', 'theme-white');
+        if (theme === 'Default') {
+            body.classList.add('theme-default');
+        } else if (theme === 'RGB') {
+            body.classList.add('theme-rgb');
+        } else if (theme === 'Pink') {
+            body.classList.add('theme-pink');
+        } else if (theme === 'Blue') {
+            body.classList.add('theme-blue');
+        } else if (theme === 'Black') {
+            body.classList.add('theme-black');
+        } else if (theme === 'White') {
+            body.classList.add('theme-white');
+        }
+    };
+
     const loadSettings = () => {
         const savedSettings = localStorage.getItem('userSettings');
         if (savedSettings) {
             const settings = JSON.parse(savedSettings);
             fontSelect.value = settings.font || "'Hachi Maru Pop', cursive";
+            themeSelect.value = settings.theme || "Default";
             fontSizeSelect.value = settings.fontSize || "12pt";
             glowToggle.checked = settings.glow !== false; // Default to true
             eventsToggle.checked = settings.events === true; // Default to false
@@ -62,11 +82,13 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 body.classList.remove('text-glow');
             }
+            applyTheme(themeSelect.value);
         } else {
             // Default settings for first-time users
             body.style.fontFamily = fontSelect.value;
             body.style.fontSize = fontSizeSelect.value;
             body.classList.add('text-glow');
+            applyTheme('Default'); // Apply default theme
         }
     };
 
@@ -128,6 +150,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // 3. Settings Changes
     fontSelect.addEventListener('change', () => {
         body.style.fontFamily = fontSelect.value;
+        saveSettings();
+    });
+
+    themeSelect.addEventListener('change', () => {
+        applyTheme(themeSelect.value);
         saveSettings();
     });
 

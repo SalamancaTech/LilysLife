@@ -14,6 +14,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const fontSizeSelect = document.getElementById('font-size-select');
     const glowToggle = document.getElementById('glow-toggle');
 
+    // Spiciness
+    const eventsToggle = document.getElementById('events-toggle');
+    const nsfwLevelToggle = document.getElementById('nsfw-level-toggle');
+
     // API Key Section
     const apiKeyInput = document.getElementById('api-key-input');
     const toggleApiKeyVisibilityButton = document.getElementById('toggle-api-key-visibility');
@@ -28,6 +32,43 @@ document.addEventListener('DOMContentLoaded', () => {
     const narrativeOutput = document.getElementById('narrative-output');
 
     // --- Functions ---
+
+    const saveSettings = () => {
+        const settings = {
+            font: fontSelect.value,
+            fontSize: fontSizeSelect.value,
+            glow: glowToggle.checked,
+            events: eventsToggle.checked,
+            nsfwLevel: nsfwLevelToggle.checked,
+        };
+        localStorage.setItem('userSettings', JSON.stringify(settings));
+    };
+
+    const loadSettings = () => {
+        const savedSettings = localStorage.getItem('userSettings');
+        if (savedSettings) {
+            const settings = JSON.parse(savedSettings);
+            fontSelect.value = settings.font || "'Hachi Maru Pop', cursive";
+            fontSizeSelect.value = settings.fontSize || "12pt";
+            glowToggle.checked = settings.glow !== false; // Default to true
+            eventsToggle.checked = settings.events === true; // Default to false
+            nsfwLevelToggle.checked = settings.nsfwLevel === true; // Default to false
+
+            // Apply settings
+            body.style.fontFamily = fontSelect.value;
+            body.style.fontSize = fontSizeSelect.value;
+            if (glowToggle.checked) {
+                body.classList.add('text-glow');
+            } else {
+                body.classList.remove('text-glow');
+            }
+        } else {
+            // Default settings for first-time users
+            body.style.fontFamily = fontSelect.value;
+            body.style.fontSize = fontSizeSelect.value;
+            body.classList.add('text-glow');
+        }
+    };
 
     const updatePromptBarState = (isBusy = false) => {
         if (apiKey && !isBusy) {
@@ -84,22 +125,25 @@ document.addEventListener('DOMContentLoaded', () => {
         settingsModule.classList.toggle('active');
     });
 
-    // 3. Font Switching
-    fontSelect.addEventListener('change', (event) => {
-        body.style.fontFamily = event.target.value;
+    // 3. Settings Changes
+    fontSelect.addEventListener('change', () => {
+        body.style.fontFamily = fontSelect.value;
+        saveSettings();
     });
 
-    fontSizeSelect.addEventListener('change', (event) => {
-        body.style.fontSize = event.target.value;
+    fontSizeSelect.addEventListener('change', () => {
+        body.style.fontSize = fontSizeSelect.value;
+        saveSettings();
     });
 
-    glowToggle.addEventListener('change', (event) => {
-        if (event.target.checked) {
-            body.classList.add('text-glow');
-        } else {
-            body.classList.remove('text-glow');
-        }
+    glowToggle.addEventListener('change', () => {
+        body.classList.toggle('text-glow', glowToggle.checked);
+        saveSettings();
     });
+
+    eventsToggle.addEventListener('change', saveSettings);
+    nsfwLevelToggle.addEventListener('change', saveSettings);
+
 
     // 4. API Key Visibility
     toggleApiKeyVisibilityButton.addEventListener('click', () => {
@@ -148,6 +192,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Initial Page Load Logic ---
 
+    loadSettings();
+
     const localKey = localStorage.getItem('geminiApiKey');
     const sessionKey = sessionStorage.getItem('geminiApiKey');
 
@@ -162,11 +208,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     updatePromptBarState();
-
-    // --- Font Initialisation ---
-    body.style.fontFamily = fontSelect.value;
-    body.style.fontSize = fontSizeSelect.value;
-    if (glowToggle.checked) {
-        body.classList.add('text-glow');
-    }
 });

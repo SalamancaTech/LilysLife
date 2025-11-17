@@ -303,3 +303,8 @@ input:checked + .slider:before {
 .text-glow {
     text-shadow: 0 0 5px #f5f5f5, 0 0 10px #f5f5f5;
 }
+
+.toggle-label {
+    vertical-align: middle;
+    margin: 0 5px;
+}

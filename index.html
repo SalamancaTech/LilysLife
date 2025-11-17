@@ -16,7 +16,10 @@
         <div class="close-icon">&times;</div>
     </div>
 
-    <div id="prompt-bar">Prompt Bar</div>
+    <div id="prompt-bar">
+        <input type="text" id="prompt-input" placeholder="Enter your prompt...">
+        <button id="send-prompt">Send</button>
+    </div>
     <div id="character-image">Character Image</div>
     <div id="location-image">Location Image</div>
     <div id="npc-image">NPC Image</div>
@@ -63,6 +66,10 @@
         <div class="icon" id="settings-icon">⚙️</div>
     </div>
 
+    <script type="module">
+        import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
+        window.GoogleGenerativeAI = GoogleGenerativeAI;
+    </script>
     <script src="script.js"></script>
 </body>
 </html>

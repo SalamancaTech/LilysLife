@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Font Switching
     const fontSelect = document.getElementById('font-select');
+    const themeSelect = document.getElementById('theme-select');
     const fontSizeSelect = document.getElementById('font-size-select');
     const glowToggle = document.getElementById('glow-toggle');
 
@@ -36,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveSettings = () => {
         const settings = {
             font: fontSelect.value,
+            theme: themeSelect.value,
             fontSize: fontSizeSelect.value,
             glow: glowToggle.checked,
             events: eventsToggle.checked,
@@ -49,6 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (savedSettings) {
             const settings = JSON.parse(savedSettings);
             fontSelect.value = settings.font || "'Hachi Maru Pop', cursive";
+            themeSelect.value = settings.theme || "Default";
             fontSizeSelect.value = settings.fontSize || "12pt";
             glowToggle.checked = settings.glow !== false; // Default to true
             eventsToggle.checked = settings.events === true; // Default to false
@@ -130,6 +133,8 @@ document.addEventListener('DOMContentLoaded', () => {
         body.style.fontFamily = fontSelect.value;
         saveSettings();
     });
+
+    themeSelect.addEventListener('change', saveSettings);
 
     fontSizeSelect.addEventListener('change', () => {
         body.style.fontSize = fontSizeSelect.value;

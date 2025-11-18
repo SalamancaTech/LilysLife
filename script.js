@@ -437,6 +437,133 @@ document.addEventListener('DOMContentLoaded', () => {
         const randomValue = Math.floor(Math.random() * 101);
         updateStatBar(stat, randomValue);
     });
+
+    // --- Intent Matrix ---
+    const intentCircle = document.getElementById('intent-circle');
+    const submitButton = document.getElementById('intent-submit-button');
+    const sliderLabels = document.querySelectorAll('.slider-labels span');
+    const sliderIndicator = document.querySelector('.slider-indicator');
+
+    let selectedCircleOption = null;
+    let selectedSliderOption = 'Neutral';
+
+    const circleOptions = [
+        { id: 'matrix_first_question', label: 'Question' },
+        { id: 'matrix_first_request', label: 'Request' },
+        { id: 'matrix_first_confess', label: 'Confess' },
+        { id: 'matrix_first_praise', label: 'Praise' },
+        { id: 'matrix_first_act', label: 'Act' },
+        { id: 'matrix_first_challenge', label: 'Challenge' },
+        { id: 'matrix_first_lie', label: 'Lie' }
+    ];
+
+    const generateCircle = () => {
+        const numSegments = circleOptions.length;
+        const angleStep = 360 / numSegments;
+        const centerX = 100;
+        const centerY = 100;
+        const radius = 95;
+
+        const toRadians = (angle) => angle * (Math.PI / 180);
+
+        const getCoordinates = (angle) => {
+            return {
+                x: centerX + radius * Math.cos(toRadians(angle - 90)),
+                y: centerY + radius * Math.sin(toRadians(angle - 90))
+            };
+        };
+
+        for (let i = 0; i < numSegments; i++) {
+            const startAngle = i * angleStep;
+            const endAngle = (i + 1) * angleStep;
+
+            const start = getCoordinates(startAngle);
+            const end = getCoordinates(endAngle);
+
+            const largeArcFlag = angleStep <= 180 ? '0' : '1';
+
+            const d = [
+                `M ${centerX},${centerY}`,
+                `L ${start.x},${start.y}`,
+                `A ${radius},${radius} 0 ${largeArcFlag} 1 ${end.x},${end.y}`,
+                'Z'
+            ].join(' ');
+
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('d', d);
+            path.setAttribute('class', 'segment');
+            path.setAttribute('id', circleOptions[i].id);
+            intentCircle.appendChild(path);
+
+            const textAngle = startAngle + angleStep / 2;
+            const textRadius = radius * 0.7;
+            const textX = centerX + textRadius * Math.cos(toRadians(textAngle - 90));
+            const textY = centerY + textRadius * Math.sin(toRadians(textAngle - 90));
+
+            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.setAttribute('x', textX);
+            text.setAttribute('y', textY);
+            text.setAttribute('class', 'segment-label');
+            text.setAttribute('dy', '0.35em'); // Vertically center
+            text.textContent = circleOptions[i].label;
+            intentCircle.appendChild(text);
+        }
+    };
+
+    const resetIntentMatrix = () => {
+        if (selectedCircleOption) {
+            document.getElementById(selectedCircleOption).classList.remove('selected');
+        }
+        selectedCircleOption = null;
+        selectedSliderOption = 'Neutral';
+        // Move indicator to the top (first label)
+        const firstLabel = sliderLabels[0];
+        const indicatorHeight = sliderIndicator.offsetHeight;
+        const newTop = firstLabel.offsetTop + (firstLabel.offsetHeight / 2) - (indicatorHeight / 2);
+        sliderIndicator.style.top = `${newTop}px`;
+    };
+
+    intentCircle.addEventListener('click', (e) => {
+        const target = e.target;
+        if (target.classList.contains('segment')) {
+            if (selectedCircleOption) {
+                document.getElementById(selectedCircleOption).classList.remove('selected');
+            }
+            target.classList.add('selected');
+            selectedCircleOption = target.id;
+        }
+    });
+
+    sliderLabels.forEach((label, index) => {
+        label.addEventListener('click', () => {
+            selectedSliderOption = label.textContent;
+            const indicatorHeight = sliderIndicator.offsetHeight;
+            // Calculate the position to center the indicator on the label
+            const newTop = label.offsetTop + (label.offsetHeight / 2) - (indicatorHeight / 2);
+            sliderIndicator.style.top = `${newTop}px`;
+        });
+    });
+
+    submitButton.addEventListener('click', () => {
+        if (!selectedCircleOption) {
+            alert('Please select an option from the circle.');
+            return;
+        }
+        const circleValue = selectedCircleOption.replace('matrix_first_', '');
+        const intent = `${circleValue}-${selectedSliderOption}`;
+        console.log('Intent Submitted:', intent);
+        alert(`Intent Submitted: ${intent}`); // For visual feedback
+        // Here you would send the 'intent' to the API
+        resetIntentMatrix();
+    });
+
+    // Initial setup
+    generateCircle();
+    // Set initial slider position
+    // We need a small delay to ensure elements have been rendered and have dimensions
+    setTimeout(() => {
+        resetIntentMatrix();
+    }, 100);
 });
 
 // --- Stats UI ---

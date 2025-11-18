@@ -516,8 +516,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         selectedCircleOption = null;
         selectedSliderOption = 'Neutral';
-        // Move indicator to the top (first label)
+
+        sliderLabels.forEach(l => l.classList.remove('selected-label'));
+
         const firstLabel = sliderLabels[0];
+        firstLabel.classList.add('selected-label');
+
         const indicatorHeight = sliderIndicator.offsetHeight;
         const newTop = firstLabel.offsetTop + (firstLabel.offsetHeight / 2) - (indicatorHeight / 2);
         sliderIndicator.style.top = `${newTop}px`;
@@ -536,6 +540,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     sliderLabels.forEach((label, index) => {
         label.addEventListener('click', () => {
+            sliderLabels.forEach(l => l.classList.remove('selected-label'));
+            label.classList.add('selected-label');
             selectedSliderOption = label.textContent;
             const indicatorHeight = sliderIndicator.offsetHeight;
             // Calculate the position to center the indicator on the label

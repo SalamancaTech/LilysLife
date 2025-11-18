@@ -550,6 +550,65 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    let isDragging = false;
+
+    sliderIndicator.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        sliderIndicator.style.transition = 'none'; // Disable transition during drag for immediate feedback
+    });
+
+    document.addEventListener('mouseup', () => {
+        if (isDragging) {
+            isDragging = false;
+            sliderIndicator.style.transition = 'top 0.3s ease'; // Re-enable transition
+
+            const indicatorRect = sliderIndicator.getBoundingClientRect();
+            const indicatorCenter = indicatorRect.top + (indicatorRect.height / 2);
+
+            let closestLabel = null;
+            let minDistance = Infinity;
+
+            sliderLabels.forEach(label => {
+                const labelRect = label.getBoundingClientRect();
+                const labelCenter = labelRect.top + (labelRect.height / 2);
+                const distance = Math.abs(indicatorCenter - labelCenter);
+
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestLabel = label;
+                }
+            });
+
+            if (closestLabel) {
+                sliderLabels.forEach(l => l.classList.remove('selected-label'));
+                closestLabel.classList.add('selected-label');
+                selectedSliderOption = closestLabel.textContent;
+                const indicatorHeight = sliderIndicator.offsetHeight;
+                const newTop = closestLabel.offsetTop + (closestLabel.offsetHeight / 2) - (indicatorHeight / 2);
+                sliderIndicator.style.top = `${newTop}px`;
+            }
+        }
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+
+        const sliderTrack = document.querySelector('.slider-track');
+        const trackRect = sliderTrack.getBoundingClientRect();
+        const indicatorHeight = sliderIndicator.offsetHeight;
+
+        // Calculate the new top position relative to the track
+        let newTop = e.clientY - trackRect.top - (indicatorHeight / 2);
+
+        // Constrain the movement within the track boundaries
+        const minTop = 0 - (indicatorHeight / 2) + (sliderLabels[0].offsetHeight / 2);
+        const maxTop = trackRect.height - (indicatorHeight / 2) - (sliderLabels[sliderLabels.length - 1].offsetHeight / 2);
+
+        newTop = Math.max(minTop, Math.min(newTop, maxTop));
+
+        sliderIndicator.style.top = `${newTop}px`;
+    });
+
     submitButton.addEventListener('click', () => {
         if (!selectedCircleOption) {
             alert('Please select an option from the circle.');

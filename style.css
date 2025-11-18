@@ -117,10 +117,37 @@ div {
     grid-column: 8 / 14;
     grid-row: 10 / 13;
     display: flex;
-    flex-direction: column;
-    padding: 5px; /* Add some padding to contain the cells */
-    gap: 5px; /* This will create the 5px margin between cells */
+    flex-direction: row; /* Horizontal layout */
+    padding: 5px;
+    gap: 5px;
 }
+
+#player-options-submit {
+    flex: 0 0 35px; /* Fixed width for the button */
+    border: none;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    padding: 5px;
+    font-size: 1.1em;
+    transition: background-color 0.2s;
+}
+
+#player-options-submit:hover {
+    background-color: #45a049;
+}
+
+#player-options-cells-container {
+    flex: 1; /* Takes up the remaining space */
+    display: flex;
+    flex-direction: column;
+    gap: 5px; /* Vertical gap between cells */
+}
+
 .player-option-cell {
     flex: 1; /* Distribute space equally */
     background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent white */
@@ -130,6 +157,8 @@ div {
     padding: 10px; /* Internal padding for text */
     text-align: left; /* Left-justify text */
     color: #fff; /* White text color for readability on dark themes */
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 /* Ensure cells inherit theme colors correctly under different themes */
 .theme-default .player-option-cell,
@@ -151,6 +180,14 @@ div {
 .theme-rgb .player-option-cell {
     background-color: rgba(128, 128, 128, 0.5); /* A neutral grey for the RGB theme */
     border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* --- Selected Cell Style --- */
+.player-option-cell.selected {
+    background-image: none !important; /* Override theme gradients */
+    background-color: yellow !important;
+    color: black !important;
+    box-shadow: 0 0 10px yellow; /* Add a glow effect */
 }
 
 #narrative-output { /* 8 */

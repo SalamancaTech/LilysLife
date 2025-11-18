@@ -628,6 +628,10 @@ input:checked + .slider:before {
     color: #fff; /* Set default text color for children */
 }
 
+#intent-matrix div {
+    overflow-y: hidden;
+}
+
 .intent-controls {
     display: flex;
     align-items: center;

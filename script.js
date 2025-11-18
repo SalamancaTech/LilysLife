@@ -1,754 +1,300 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // --- Global State ---
-    let apiKey = null;
+/**
+ * LILY'S LIFE - MAIN GAME CONTROLLER (V5.0 - UNIFIED)
+ * @description The central nervous system. Connects UI, State, and Logic.
+ * @author Delilah (AI Co-Author)
+ *
+ * INTEGRATION NOTE:
+ * This file now contains BOTH the Game Controller and the Status Logic.
+ * No external modules are required.
+ */
 
-    // --- DOM Elements ---
-    const devModeToggle = document.getElementById('dev-mode-toggle');
-    // Menu & Settings
-    const menuButton = document.getElementById('menu-button');
-    const body = document.body;
-    const settingsIcon = document.getElementById('settings-icon');
-    const settingsModule = document.getElementById('settings_module');
-    const saveloadIcon = document.getElementById('saveload-icon');
-    const saveloadModule = document.getElementById('saveload_module');
-    const newGameButton = document.getElementById('new-game-button');
-    const saveSlotsContainer = document.getElementById('save-slots-container');
+// ============================================================================
+// PART 1: THE LOGIC ENGINE (Formerly Status_Segment_Handler.js)
+// ============================================================================
 
+// Configuration Constants
+const CONFIG = {
+    DEBUG_MODE: true, // Set to false for production efficiency
+    THRESHOLDS: {
+        VITALITY_CRITICAL: 30, // Below this, physical exhaustion sets in
+        TEMP_TOLERANCE: 50     // Max difference between Outfit and Location before penalty
+    },
+    PENALTIES: {
+        EXHAUSTION: { VITALITY: -5, WILL: -3 },
+        TEMP_MISMATCH: { VITALITY: -10 },
+        JOB_FACTORY: { VITALITY: -15, WILL: -5 } // The "Factory Tax"
+    },
+    // Mapping string values from V5-Locations to numeric constants
+    LOCATION_TEMPS: {
+        "Hot": 75,
+        "Neutral": 0,
+        "Cold": -75
+    }
+};
 
-    // Font Switching
-    const fontSelect = document.getElementById('font-select');
-    const themeSelect = document.getElementById('theme-select');
-    const fontSizeSelect = document.getElementById('font-size-select');
-    const glowToggle = document.getElementById('glow-toggle');
+class StatusSegmentHandler {
 
-    // Spiciness
-    const eventsToggle = document.getElementById('events-toggle');
-    const nsfwLevelToggle = document.getElementById('nsfw-level-toggle');
-
-    // API Key Section
-    const apiKeyInput = document.getElementById('api-key-input');
-    const toggleApiKeyVisibilityButton = document.getElementById('toggle-api-key-visibility');
-    const apiKeyStorageToggle = document.getElementById('api-key-storage-toggle');
-    const storageStatus = document.getElementById('storage-status');
-    const applyApiKeyButton = document.getElementById('apply-api-key');
-    const clearApiKeyButton = document.getElementById('clear-api-key');
-
-    // Prompt & Narrative
-    const promptInput = document.getElementById('prompt-input');
-    const sendPromptButton = document.getElementById('send-prompt');
-    const narrativeOutput = document.getElementById('narrative-output');
-
-    // Player Options
-    const playerOptionsContainer = document.getElementById('player-options-cells-container');
-    const playerOptionsSubmit = document.getElementById('player-options-submit');
-
-    // --- Functions ---
-
-    const saveSettings = () => {
-        const settings = {
-            font: fontSelect.value,
-            theme: themeSelect.value,
-            fontSize: fontSizeSelect.value,
-            glow: glowToggle.checked,
-            events: eventsToggle.checked,
-            nsfwLevel: nsfwLevelToggle.checked,
+    /**
+     * Calculates the cumulative penalties for a given game segment.
+     * @param {string} segmentId - The ID of the segment ending (e.g., "Morning-3")
+     * @param {object} currentState - The full state object
+     * @returns {object} - An object containing the delta values to apply { VITALITY, WILL, FATIGUE }
+     */
+    static calculateSegmentToll(segmentId, currentState) {
+        let toll = {
+            VITALITY: 0,
+            WILL: 0,
+            FATIGUE: 0
         };
-        localStorage.setItem('userSettings', JSON.stringify(settings));
-    };
 
-    const applyTheme = (theme) => {
-        body.classList.remove('theme-default', 'theme-rgb', 'theme-pink', 'theme-blue', 'theme-black', 'theme-white');
-        if (theme === 'Default') {
-            body.classList.add('theme-default');
-        } else if (theme === 'RGB') {
-            body.classList.add('theme-rgb');
-        } else if (theme === 'Pink') {
-            body.classList.add('theme-pink');
-        } else if (theme === 'Blue') {
-            body.classList.add('theme-blue');
-        } else if (theme === 'Black') {
-            body.classList.add('theme-black');
-        } else if (theme === 'White') {
-            body.classList.add('theme-white');
-        }
-    };
-
-    const loadSettings = () => {
-        const savedSettings = localStorage.getItem('userSettings');
-        if (savedSettings) {
-            const settings = JSON.parse(savedSettings);
-            fontSelect.value = settings.font || "'Hachi Maru Pop', cursive";
-            themeSelect.value = settings.theme || "Default";
-            fontSizeSelect.value = settings.fontSize || "12pt";
-            glowToggle.checked = settings.glow !== false; // Default to true
-            eventsToggle.checked = settings.events === true; // Default to false
-            nsfwLevelToggle.checked = settings.nsfwLevel === true; // Default to false
-
-            // Apply settings
-            body.style.fontFamily = fontSelect.value;
-            body.style.fontSize = fontSizeSelect.value;
-            if (glowToggle.checked) {
-                body.classList.add('text-glow');
-            } else {
-                body.classList.remove('text-glow');
-            }
-            applyTheme(themeSelect.value);
-        } else {
-            // Default settings for first-time users
-            body.style.fontFamily = fontSelect.value;
-            body.style.fontSize = fontSizeSelect.value;
-            body.classList.add('text-glow');
-            applyTheme('Default'); // Apply default theme
-        }
-    };
-
-    const updatePromptBarState = (isBusy = false) => {
-        if (apiKey && !isBusy) {
-            promptInput.disabled = false;
-            sendPromptButton.disabled = false;
-            promptInput.placeholder = "Enter your prompt...";
-        } else {
-            promptInput.disabled = true;
-            sendPromptButton.disabled = true;
-            if (isBusy) {
-                promptInput.placeholder = "Thinking...";
-            } else {
-                promptInput.placeholder = "Please set your API key in the settings menu.";
-            }
-        }
-    };
-
-    const runQuery = async () => {
-        const prompt = promptInput.value.trim();
-        if (!prompt || !apiKey) {
-            return;
+        // Defensive coding: Ensure currentState exists
+        if (!currentState || !currentState.lily) {
+            if (CONFIG.DEBUG_MODE) console.error("[StatusHandler] Error: Invalid State Object provided.");
+            return toll;
         }
 
-        narrativeOutput.textContent = "Hmm, lemme think...";
-        updatePromptBarState(true); // Disable input while thinking
+        const { VITALITY, location, activeJob, outfit } = currentState.lily;
+        
+        if (CONFIG.DEBUG_MODE) console.log(`[StatusHandler] Running checks for ${segmentId}...`);
 
-        try {
-            const genAI = new window.GoogleGenerativeAI(apiKey);
-            const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-            const result = await model.generateContent(prompt);
-            const response = await result.response;
-            const text = response.text();
-            narrativeOutput.textContent = text;
-        } catch (error) {
-            console.error("Error with Gemini API:", error);
-            narrativeOutput.textContent = `An error occurred: ${error.message}`;
-        } finally {
-            updatePromptBarState(false); // Re-enable input
-            promptInput.value = ''; // Clear input after sending
+        // --- CHECK 1: LOW VITALITY / EXHAUSTION ---
+        if (VITALITY <= CONFIG.THRESHOLDS.VITALITY_CRITICAL) {
+            if (CONFIG.DEBUG_MODE) console.log(`[StatusHandler] CRITICAL VITALITY (${VITALITY}). Applying Exhaustion Penalty.`);
+            toll.VITALITY += CONFIG.PENALTIES.EXHAUSTION.VITALITY;
+            toll.WILL += CONFIG.PENALTIES.EXHAUSTION.WILL;
+            toll.FATIGUE += 5; 
         }
-    };
 
-    // --- Event Listeners ---
+        // --- CHECK 2: ENVIRONMENTAL STRESS (TEMP) ---
+        const locTempString = location.Temp || "Neutral";
+        const locTempVal = CONFIG.LOCATION_TEMPS[locTempString] || 0;
+        const outfitTemp = outfit.TempRating || 0;
+        const tempDiff = Math.abs(outfitTemp - locTempVal);
 
-    // 1. Menu Toggle
-    menuButton.addEventListener('click', () => {
-        const isOpen = body.classList.contains('menu-open');
-        body.classList.toggle('menu-open');
-        if (isOpen) settingsModule.classList.remove('active');
-    });
+        if (tempDiff > CONFIG.THRESHOLDS.TEMP_TOLERANCE) {
+            if (CONFIG.DEBUG_MODE) console.log(`[StatusHandler] TEMP MISMATCH (Diff: ${tempDiff}). Applying Exposure Penalty.`);
+            toll.VITALITY += CONFIG.PENALTIES.TEMP_MISMATCH.VITALITY;
+        }
 
-    // 2. Menu Navigation
-    settingsIcon.addEventListener('click', () => {
-        settingsModule.style.display = 'block';
-        saveloadModule.style.display = 'none';
-        settingsModule.classList.add('active');
-    });
+        // --- CHECK 3: JOB-SPECIFIC STRESS (THE FACTORY) ---
+        if (activeJob && activeJob.id === "Job_Factory") {
+            if (CONFIG.DEBUG_MODE) console.log(`[StatusHandler] HAZARD WORK DETECTED. Applying Factory Tax.`);
+            toll.VITALITY += CONFIG.PENALTIES.JOB_FACTORY.VITALITY;
+            toll.WILL += CONFIG.PENALTIES.JOB_FACTORY.WILL;
+            toll.FATIGUE += 10; 
+        }
 
-    saveloadIcon.addEventListener('click', () => {
-        settingsModule.style.display = 'none';
-        saveloadModule.style.display = 'block';
-        renderSaveSlots();
-    });
+        return toll;
+    }
 
-    // --- Save/Load Functions ---
-    const getSaveData = () => {
+    /**
+     * Returns a compliant State Object structure if one does not exist.
+     */
+    static getInitialState() {
         return {
-            font: fontSelect.value,
-            theme: themeSelect.value,
-            fontSize: fontSizeSelect.value,
-            glow: glowToggle.checked,
-            events: eventsToggle.checked,
-            nsfwLevel: nsfwLevelToggle.checked,
-            timestamp: new Date().toLocaleString(),
-            // Placeholders for future data
-            preset1: 'DefaultPreset',
-            preset2: 'StandardPlay'
-        };
-    };
-
-    const saveGame = (slotIndex) => {
-        const saveData = getSaveData();
-        const saveSlots = getSaveSlots();
-
-        // Check if the slot is empty, if so, assign a default name.
-        if (!saveSlots[slotIndex]) {
-            saveSlots[slotIndex] = {}; // Initialize if null
-        }
-        if (!saveSlots[slotIndex].name) {
-            saveSlots[slotIndex].name = `Save Slot ${slotIndex + 1}`;
-        }
-
-        saveSlots[slotIndex].data = saveData;
-        localStorage.setItem('saveSlots', JSON.stringify(saveSlots));
-        renderSaveSlots();
-        alert(`Game saved to Slot ${slotIndex + 1}`);
-    };
-
-    const loadGame = (slotIndex) => {
-        const saveSlots = getSaveSlots();
-        const slot = saveSlots[slotIndex];
-        if (slot && slot.data) {
-            const settings = slot.data;
-            // Apply settings from the loaded data
-            fontSelect.value = settings.font;
-            themeSelect.value = settings.theme;
-            fontSizeSelect.value = settings.fontSize;
-            glowToggle.checked = settings.glow;
-            eventsToggle.checked = settings.events;
-            nsfwLevelToggle.checked = settings.nsfwLevel;
-
-            // Trigger the change events to update the UI
-            fontSelect.dispatchEvent(new Event('change'));
-            themeSelect.dispatchEvent(new Event('change'));
-            fontSizeSelect.dispatchEvent(new Event('change'));
-            glowToggle.dispatchEvent(new Event('change'));
-            eventsToggle.dispatchEvent(new Event('change'));
-            nsfwLevelToggle.dispatchEvent(new Event('change'));
-
-            alert(`Game loaded from Slot ${slotIndex + 1}`);
-        } else {
-            alert('No data to load from this slot.');
-        }
-    };
-
-    const deleteGame = (slotIndex) => {
-        if (confirm(`Are you sure you want to delete Save Slot ${slotIndex + 1}?`)) {
-            const saveSlots = getSaveSlots();
-            saveSlots[slotIndex] = null; // Clear the slot
-            localStorage.setItem('saveSlots', JSON.stringify(saveSlots));
-            renderSaveSlots();
-            alert(`Save Slot ${slotIndex + 1} deleted.`);
-        }
-    };
-
-    const copyGame = (slotIndex) => {
-        const saveSlots = getSaveSlots();
-        const sourceSlot = saveSlots[slotIndex];
-
-        if (!sourceSlot) {
-            alert('Cannot copy an empty slot.');
-            return;
-        }
-
-        const nextEmptySlotIndex = saveSlots.findIndex(slot => !slot);
-        if (nextEmptySlotIndex === -1) {
-            alert('No available slots to copy to.');
-            return;
-        }
-
-        // Deep copy of the data and a new name
-        const newSave = JSON.parse(JSON.stringify(sourceSlot));
-        newSave.name = `${sourceSlot.name} - COPY`;
-        newSave.data.timestamp = new Date().toLocaleString(); // Update timestamp on copy
-
-        saveSlots[nextEmptySlotIndex] = newSave;
-        localStorage.setItem('saveSlots', JSON.stringify(saveSlots));
-        renderSaveSlots();
-        alert(`Copied Slot ${slotIndex + 1} to Slot ${nextEmptySlotIndex + 1}.`);
-    };
-
-    const getSaveSlots = () => {
-        const slots = localStorage.getItem('saveSlots');
-        // Ensure we always have an array of 5 slots
-        let parsedSlots = slots ? JSON.parse(slots) : [];
-        while (parsedSlots.length < 5) {
-            parsedSlots.push(null);
-        }
-        return parsedSlots.slice(0, 5); // Ensure it's not more than 5
-    };
-
-    const renderSaveSlots = () => {
-        const slots = getSaveSlots();
-        saveSlotsContainer.innerHTML = ''; // Clear existing slots
-
-        slots.forEach((slot, index) => {
-            const slotEl = document.createElement('div');
-            slotEl.className = 'save-slot';
-
-            const isEmpty = !slot;
-            const slotName = isEmpty ? `Save Slot ${index + 1}` : slot.name;
-            const timestamp = isEmpty ? 'Empty' : slot.data.timestamp;
-            const preset1 = isEmpty ? 'N/A' : slot.data.preset1;
-            const preset2 = isEmpty ? 'N/A' : slot.data.preset2;
-
-            slotEl.innerHTML = `
-                <div class="slot-info">
-                    <input type="text" class="save-name-input" value="${slotName}" data-slot-index="${index}">
-                    <p class="timestamp">Timestamp: ${timestamp}</p>
-                    <p class="presets">Presets: ${preset1} / ${preset2}</p>
-                </div>
-                <div class="slot-actions">
-                    <button class="save-button" data-slot-index="${index}">Save</button>
-                    <button class="load-button" data-slot-index="${index}" ${isEmpty ? 'disabled' : ''}>Load</button>
-                    <button class="copy-button" data-slot-index="${index}" ${isEmpty ? 'disabled' : ''}>Copy</button>
-                    <button class="delete-button" data-slot-index="${index}" ${isEmpty ? 'disabled' : ''}>Delete</button>
-                </div>
-            `;
-            saveSlotsContainer.appendChild(slotEl);
-        });
-    };
-
-    // Event delegation for save slots container
-    saveSlotsContainer.addEventListener('click', (e) => {
-        const target = e.target;
-        const slotIndex = parseInt(target.dataset.slotIndex, 10);
-
-        if (target.classList.contains('save-button')) {
-            saveGame(slotIndex);
-        } else if (target.classList.contains('load-button')) {
-            loadGame(slotIndex);
-        } else if (target.classList.contains('delete-button')) {
-            deleteGame(slotIndex);
-        } else if (target.classList.contains('copy-button')) {
-            copyGame(slotIndex);
-        }
-    });
-
-    // Handler for editing save slot names
-    saveSlotsContainer.addEventListener('change', (e) => {
-        const target = e.target;
-        if (target.classList.contains('save-name-input')) {
-            const slotIndex = parseInt(target.dataset.slotIndex, 10);
-            const newName = target.value.trim();
-            if (newName) {
-                const saveSlots = getSaveSlots();
-                if (!saveSlots[slotIndex]) {
-                     saveSlots[slotIndex] = {}; // Initialize if it was empty
+            lily: {
+                // Core Stats
+                VITALITY: 100,
+                WILL: 50,
+                FATIGUE: 0,
+                
+                // Context
+                location: {
+                    id: "home_lily_bedroom",
+                    Temp: "Neutral" // "Hot", "Cold", "Neutral"
+                },
+                
+                activeJob: {
+                    id: null, 
+                    name: "Unemployed"
+                },
+                
+                outfit: {
+                    id: "outfit_default_pajamas",
+                    TempRating: 20 // Positive = Warm, Negative = Cool/Exposed
                 }
-                saveSlots[slotIndex].name = newName;
-                localStorage.setItem('saveSlots', JSON.stringify(saveSlots));
-                // No need to re-render, just update the data
-            } else {
-                // If the name is cleared, revert to the original value
-                const saveSlots = getSaveSlots();
-                target.value = saveSlots[slotIndex] ? saveSlots[slotIndex].name : `Save Slot ${slotIndex + 1}`;
+            },
+            game: {
+                currentSegment: "Dawn",
+                day: 1
             }
-        }
-    });
+        };
+    }
+}
 
+// ============================================================================
+// PART 2: THE CONTROLLER (Formerly script.js)
+// ============================================================================
 
-    // 3. Settings Changes
-    fontSelect.addEventListener('change', () => {
-        body.style.fontFamily = fontSelect.value;
-        saveSettings();
-    });
-
-    themeSelect.addEventListener('change', () => {
-        applyTheme(themeSelect.value);
-        saveSettings();
-    });
-
-    fontSizeSelect.addEventListener('change', () => {
-        body.style.fontSize = fontSizeSelect.value;
-        saveSettings();
-    });
-
-    glowToggle.addEventListener('change', () => {
-        body.classList.toggle('text-glow', glowToggle.checked);
-        saveSettings();
-    });
-
-    eventsToggle.addEventListener('change', saveSettings);
-    nsfwLevelToggle.addEventListener('change', saveSettings);
-
-
-    // 4. API Key Visibility
-    toggleApiKeyVisibilityButton.addEventListener('click', () => {
-        const type = apiKeyInput.getAttribute('type') === 'password' ? 'text' : 'password';
-        apiKeyInput.setAttribute('type', type);
-    });
-
-    // 5. API Key Storage Toggle
-    apiKeyStorageToggle.addEventListener('change', () => {
-        storageStatus.textContent = apiKeyStorageToggle.checked ? 'Saved' : 'Unsaved';
-    });
-
-    // 6. Apply API Key
-    applyApiKeyButton.addEventListener('click', () => {
-        apiKey = apiKeyInput.value.trim();
-        if (apiKeyStorageToggle.checked) { // "Saved"
-            localStorage.setItem('geminiApiKey', apiKey);
-            sessionStorage.removeItem('geminiApiKey');
-        } else { // "Unsaved"
-            sessionStorage.setItem('geminiApiKey', apiKey);
-            localStorage.removeItem('geminiApiKey');
-        }
-        alert('API Key applied!');
-        updatePromptBarState();
-    });
-
-    // 7. Clear API Key
-    clearApiKeyButton.addEventListener('click', () => {
-        localStorage.removeItem('geminiApiKey');
-        sessionStorage.removeItem('geminiApiKey');
-        apiKeyInput.value = '';
-        apiKey = null;
-        apiKeyStorageToggle.checked = false;
-        storageStatus.textContent = 'Unsaved';
-        alert('API Key cleared!');
-        updatePromptBarState();
-    });
-
-    // 8. Prompt Submission
-    sendPromptButton.addEventListener('click', runQuery);
-    promptInput.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-            runQuery();
-        }
-    });
-
-    // --- Initial Page Load Logic ---
-
-    loadSettings();
-
-    const localKey = localStorage.getItem('geminiApiKey');
-    const sessionKey = sessionStorage.getItem('geminiApiKey');
-
-    if (localKey) {
-        apiKey = localKey;
-        apiKeyInput.value = localKey;
-        apiKeyStorageToggle.checked = true;
-        storageStatus.textContent = 'Saved';
-    } else if (sessionKey) {
-        apiKey = sessionKey;
-        apiKeyInput.value = sessionKey;
+class GameController {
+    constructor() {
+        this.state = null;
+        this.ui = {};
+        
+        // Wait for DOM to be ready
+        document.addEventListener('DOMContentLoaded', () => {
+            this.init();
+        });
     }
 
-    updatePromptBarState();
+    /**
+     * Boot Sequence
+     */
+    init() {
+        console.log("Delilah Engine: Initializing Lily's Life...");
+        
+        // 1. Load State
+        this.state = StatusSegmentHandler.getInitialState();
+        
+        // 2. Bind UI Elements
+        this.cacheDOM();
+        
+        // 3. Attach Event Listeners
+        this.bindEvents();
+        
+        // 4. Initial Render
+        this.updateUI("Game Start: " + this.state.game.currentSegment);
+        
+        this.log("Delilah: System Online. Welcome to the grind, Lily.");
+    }
 
-    // --- Player Options Logic ---
-    playerOptionsContainer.addEventListener('click', (e) => {
-        const targetCell = e.target.closest('.player-option-cell');
-        if (!targetCell) return; // Ignore clicks that aren't on a cell
-
-        // Deselect any currently selected cell
-        const previouslySelected = playerOptionsContainer.querySelector('.selected');
-        if (previouslySelected) {
-            previouslySelected.classList.remove('selected');
-        }
-
-        // Select the clicked cell
-        targetCell.classList.add('selected');
-    });
-
-    playerOptionsSubmit.addEventListener('click', () => {
-        const selectedCell = playerOptionsContainer.querySelector('.selected');
-        if (selectedCell) {
-            console.log(`Submitted option: ${selectedCell.id}`);
-            alert(`You selected: ${selectedCell.textContent || 'the player input option'}`);
-            // Future logic to send the selection will go here
-        } else {
-            alert('Please select an option first.');
-        }
-    });
-
-    // --- Intent Matrix ---
-    const intentCircle = document.getElementById('intent-circle');
-    const submitButton = document.getElementById('intent-submit-button');
-    const sliderLabels = document.querySelectorAll('.slider-labels span');
-    const sliderIndicator = document.querySelector('.slider-indicator');
-
-    let selectedCircleOption = null;
-    let selectedSliderOption = 'Neutral';
-
-    const circleOptions = [
-        { id: 'matrix_first_question', label: 'Question' },
-        { id: 'matrix_first_request', label: 'Request' },
-        { id: 'matrix_first_confess', label: 'Confess' },
-        { id: 'matrix_first_praise', label: 'Praise' },
-        { id: 'matrix_first_act', label: 'Act' },
-        { id: 'matrix_first_challenge', label: 'Challenge' },
-        { id: 'matrix_first_lie', label: 'Lie' }
-    ];
-
-    const generateCircle = () => {
-        const numSegments = circleOptions.length;
-        const angleStep = 360 / numSegments;
-        const centerX = 100;
-        const centerY = 100;
-        const radius = 95;
-
-        const toRadians = (angle) => angle * (Math.PI / 180);
-
-        const getCoordinates = (angle) => {
-            return {
-                x: centerX + radius * Math.cos(toRadians(angle - 90)),
-                y: centerY + radius * Math.sin(toRadians(angle - 90))
-            };
+    /**
+     * Cache all DOM elements to avoid repeated lookups
+     */
+    cacheDOM() {
+        this.ui = {
+            // Stats (Assuming Progress Bars or Text)
+            vitalityBar: document.getElementById('bar-vitality'), 
+            willBar: document.getElementById('bar-will'),
+            fatigueBar: document.getElementById('bar-fatigue'),
+            
+            // Text Labels for Stats
+            vitalityText: document.getElementById('val-vitality'),
+            willText: document.getElementById('val-will'),
+            
+            // Location / Context
+            locHeader: document.getElementById('location-title'),
+            locDesc: document.getElementById('location-desc'),
+            timeDisplay: document.getElementById('time-display'),
+            
+            // Narrative Log
+            log: document.getElementById('narrative-log'),
+            
+            // Buttons
+            btnNext: document.getElementById('btn-next-segment'),
+            btnWork: document.getElementById('btn-action-work') 
         };
+    }
 
-        for (let i = 0; i < numSegments; i++) {
-            const startAngle = i * angleStep;
-            const endAngle = (i + 1) * angleStep;
-
-            const start = getCoordinates(startAngle);
-            const end = getCoordinates(endAngle);
-
-            const largeArcFlag = angleStep <= 180 ? '0' : '1';
-
-            const d = [
-                `M ${centerX},${centerY}`,
-                `L ${start.x},${start.y}`,
-                `A ${radius},${radius} 0 ${largeArcFlag} 1 ${end.x},${end.y}`,
-                'Z'
-            ].join(' ');
-
-            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            path.setAttribute('d', d);
-            path.setAttribute('class', 'segment');
-            path.setAttribute('id', circleOptions[i].id);
-            intentCircle.appendChild(path);
-
-            const textAngle = startAngle + angleStep / 2;
-            const textRadius = radius * 0.7;
-            const textX = centerX + textRadius * Math.cos(toRadians(textAngle - 90));
-            const textY = centerY + textRadius * Math.sin(toRadians(textAngle - 90));
-
-            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            text.setAttribute('x', textX);
-            text.setAttribute('y', textY);
-            text.setAttribute('class', 'segment-label');
-            text.setAttribute('dy', '0.35em'); // Vertically center
-            text.textContent = circleOptions[i].label;
-            intentCircle.appendChild(text);
+    /**
+     * Attach Click Handlers
+     */
+    bindEvents() {
+        if (this.ui.btnNext) {
+            this.ui.btnNext.addEventListener('click', () => this.advanceTimeSegment());
         }
-    };
-
-    const resetIntentMatrix = () => {
-        if (selectedCircleOption) {
-            document.getElementById(selectedCircleOption).classList.remove('selected');
-        }
-        selectedCircleOption = null;
-        selectedSliderOption = 'Neutral';
-
-        sliderLabels.forEach(l => l.classList.remove('selected-label'));
-
-        const firstLabel = sliderLabels[0];
-        firstLabel.classList.add('selected-label');
-
-        const indicatorHeight = sliderIndicator.offsetHeight;
-        const newTop = firstLabel.offsetTop + (firstLabel.offsetHeight / 2) - (indicatorHeight / 2);
-        sliderIndicator.style.top = `${newTop}px`;
-    };
-
-    intentCircle.addEventListener('click', (e) => {
-        const target = e.target;
-        if (target.classList.contains('segment')) {
-            if (selectedCircleOption) {
-                document.getElementById(selectedCircleOption).classList.remove('selected');
-            }
-            target.classList.add('selected');
-            selectedCircleOption = target.id;
-        }
-    });
-
-    sliderLabels.forEach((label, index) => {
-        label.addEventListener('click', () => {
-            sliderLabels.forEach(l => l.classList.remove('selected-label'));
-            label.classList.add('selected-label');
-            selectedSliderOption = label.textContent;
-            const indicatorHeight = sliderIndicator.offsetHeight;
-            // Calculate the position to center the indicator on the label
-            const newTop = label.offsetTop + (label.offsetHeight / 2) - (indicatorHeight / 2);
-            sliderIndicator.style.top = `${newTop}px`;
-        });
-    });
-
-    let isDragging = false;
-
-    sliderIndicator.addEventListener('mousedown', (e) => {
-        isDragging = true;
-        sliderIndicator.style.transition = 'none'; // Disable transition during drag for immediate feedback
-    });
-
-    document.addEventListener('mouseup', () => {
-        if (isDragging) {
-            isDragging = false;
-            sliderIndicator.style.transition = 'top 0.3s ease'; // Re-enable transition
-
-            const indicatorRect = sliderIndicator.getBoundingClientRect();
-            const indicatorCenter = indicatorRect.top + (indicatorRect.height / 2);
-
-            let closestLabel = null;
-            let minDistance = Infinity;
-
-            sliderLabels.forEach(label => {
-                const labelRect = label.getBoundingClientRect();
-                const labelCenter = labelRect.top + (labelRect.height / 2);
-                const distance = Math.abs(indicatorCenter - labelCenter);
-
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    closestLabel = label;
-                }
-            });
-
-            if (closestLabel) {
-                sliderLabels.forEach(l => l.classList.remove('selected-label'));
-                closestLabel.classList.add('selected-label');
-                selectedSliderOption = closestLabel.textContent;
-                const indicatorHeight = sliderIndicator.offsetHeight;
-                const newTop = closestLabel.offsetTop + (closestLabel.offsetHeight / 2) - (indicatorHeight / 2);
-                sliderIndicator.style.top = `${newTop}px`;
-            }
-        }
-    });
-
-    document.addEventListener('mousemove', (e) => {
-        if (!isDragging) return;
-
-        const sliderTrack = document.querySelector('.slider-track');
-        const trackRect = sliderTrack.getBoundingClientRect();
-        const indicatorHeight = sliderIndicator.offsetHeight;
-
-        // Calculate the new top position relative to the track
-        let newTop = e.clientY - trackRect.top - (indicatorHeight / 2);
-
-        // Constrain the movement within the track boundaries
-        const minTop = 0 - (indicatorHeight / 2) + (sliderLabels[0].offsetHeight / 2);
-        const maxTop = trackRect.height - (indicatorHeight / 2) - (sliderLabels[sliderLabels.length - 1].offsetHeight / 2);
-
-        newTop = Math.max(minTop, Math.min(newTop, maxTop));
-
-        sliderIndicator.style.top = `${newTop}px`;
-    });
-
-    submitButton.addEventListener('click', () => {
-        if (!selectedCircleOption) {
-            alert('Please select an option from the circle.');
-            return;
-        }
-        const circleValue = selectedCircleOption.replace('matrix_first_', '');
-        const intent = `${circleValue}-${selectedSliderOption}`;
-        console.log('Intent Submitted:', intent);
-        alert(`Intent Submitted: ${intent}`); // For visual feedback
-        // Here you would send the 'intent' to the API
-        resetIntentMatrix();
-    });
-
-    // Initial setup
-    generateCircle();
-    // Set initial slider position
-    // We need a small delay to ensure elements have been rendered and have dimensions
-    setTimeout(() => {
-        resetIntentMatrix();
-    }, 100);
-
-    // --- Stats UI ---
-
-    function updateStatBar(statId, value) {
-        const statBar = document.getElementById(statId);
-        if (statBar) {
-            const barFill = statBar.querySelector('.bar-fill');
-            if (barFill) {
-                const percentage = Math.max(0, Math.min(100, value)); // Clamp value between 0 and 100
-                if (statBar.classList.contains('vertical')) {
-                    barFill.style.height = `${percentage}%`;
-                } else {
-                    barFill.style.width = `${percentage}%`;
-                }
-            }
+        
+        // Debug: Simulate a Job Change for testing our Handler
+        if (this.ui.btnWork) {
+            this.ui.btnWork.addEventListener('click', () => this.simulateJobChoice());
         }
     }
 
-    // --- Initialize Stats with Placeholder Values ---
-    const stats = [
-        'stat-vitality', 'stat-will', 'stat-nba', 'stat-awareness',
-        'stat-socialpressure', 'stat-grace', 'stat-danger',
-        'stat-friendship', 'stat-attraction', 'stat-temperature'
-    ];
+    /**
+     * CORE LOOP: Advance Time & Calculate Tolls
+     */
+    advanceTimeSegment() {
+        const previousSegment = this.state.game.currentSegment;
+        
+        // 1. Run the Delilah Status Engine BEFORE moving time
+        const toll = StatusSegmentHandler.calculateSegmentToll(previousSegment, this.state);
+        
+        // 2. Apply the Tolls
+        this.applyToll(toll);
+        
+        // 3. Move Logic Forward
+        this.cycleTimeSegment();
+        
+        // 4. Update Visuals
+        this.updateUI(`Time Passed. Segment toll applied.`);
+    }
 
-    stats.forEach(stat => {
-        const randomValue = Math.floor(Math.random() * 101);
-        updateStatBar(stat, randomValue);
-    });
+    /**
+     * Applies the calculated penalties to the live state
+     */
+    applyToll(toll) {
+        // Apply logic
+        this.state.lily.VITALITY += toll.VITALITY;
+        this.state.lily.WILL += toll.WILL;
+        this.state.lily.FATIGUE += toll.FATIGUE; 
+        
+        // Clamp values
+        this.state.lily.VITALITY = Math.max(0, Math.min(100, this.state.lily.VITALITY));
+        this.state.lily.WILL = Math.max(0, Math.min(100, this.state.lily.WILL));
 
-    // --- Stat Tooltip & Dragging ---
-    const statTooltip = document.getElementById('stat-tooltip');
-    const statBars = document.querySelectorAll('.stat-bar');
+        // Generate Narrative Feedback
+        if (toll.VITALITY < 0) this.log(`WARNING: You lost ${Math.abs(toll.VITALITY)} Vitality this segment.`);
+        if (toll.WILL < 0) this.log(`MENTAL STRAIN: Willpower dropped by ${Math.abs(toll.WILL)}.`);
+        if (toll.FATIGUE > 0) this.log(`FATIGUE: +${toll.FATIGUE} accumulated.`);
+    }
 
-    devModeToggle.addEventListener('change', () => {
-        document.body.classList.toggle('dev-mode-active', devModeToggle.checked);
-    });
+    /**
+     * Simple Time Cycler
+     */
+    cycleTimeSegment() {
+        const cycle = ["Dawn", "Morning", "Day", "Evening", "Night"];
+        const currentIdx = cycle.indexOf(this.state.game.currentSegment);
+        const nextIdx = (currentIdx + 1) % cycle.length;
+        
+        this.state.game.currentSegment = cycle[nextIdx];
+        
+        if (nextIdx === 0) this.state.game.day++;
+    }
 
-    statBars.forEach(statBar => {
-        const barFill = statBar.querySelector('.bar-fill');
+    /**
+     * UI UPDATER
+     */
+    updateUI(statusMessage) {
+        const { lily, game } = this.state;
 
-        const getStatValue = () => {
-            const isVertical = statBar.classList.contains('vertical');
-            const style = isVertical ? barFill.style.height : barFill.style.width;
-            return parseInt(style, 10) || 0;
-        };
+        // 1. Update Stats
+        if (this.ui.vitalityBar) this.ui.vitalityBar.style.width = `${lily.VITALITY}%`;
+        if (this.ui.willBar) this.ui.willBar.style.width = `${lily.WILL}%`;
+        if (this.ui.fatigueBar) this.ui.fatigueBar.style.width = `${lily.FATIGUE}%`;
 
-        statBar.addEventListener('mouseenter', (e) => {
-            const value = getStatValue();
-            statTooltip.textContent = value;
-            statTooltip.classList.remove('hidden');
-        });
+        if (this.ui.vitalityText) this.ui.vitalityText.innerText = Math.round(lily.VITALITY);
+        
+        // 2. Update Location/Time
+        if (this.ui.timeDisplay) this.ui.timeDisplay.innerText = `Day ${game.day} : ${game.currentSegment}`;
+        if (this.ui.locHeader) this.ui.locHeader.innerText = lily.location.id.replace(/_/g, ' ').toUpperCase();
+        
+        // 3. Log Status
+        if (statusMessage) console.log(statusMessage);
+    }
 
-        statBar.addEventListener('mouseleave', () => {
-            statTooltip.classList.add('hidden');
-        });
+    /**
+     * Helper: Add text to the on-screen log
+     */
+    log(text) {
+        if (!this.ui.log) return;
+        const entry = document.createElement('div');
+        entry.className = "log-entry";
+        entry.innerText = `> ${text}`;
+        this.ui.log.prepend(entry);
+    }
 
-        statBar.addEventListener('mousemove', (e) => {
-            // Position the tooltip slightly above and to the right of the cursor
-            statTooltip.style.left = `${e.pageX + 10}px`;
-            statTooltip.style.top = `${e.pageY - 20}px`;
-        });
+    /**
+     * DEBUG TOOL: Sets up the "Factory" scenario
+     */
+    simulateJobChoice() {
+        this.log("DEBUG: Selecting FACTORY JOB (Hazards Active)");
+        this.state.lily.activeJob = { id: "Job_Factory", name: "Hazardous Materials" };
+        this.state.lily.location.Temp = "Hot"; 
+        this.state.lily.outfit.TempRating = -10; 
+        this.updateUI("Job Assigned: Factory");
+    }
+}
 
-        statBar.addEventListener('mousedown', (e) => {
-            if (!devModeToggle.checked) return;
-
-            e.preventDefault(); // Prevent text selection
-
-            const isVertical = statBar.classList.contains('vertical');
-            const track = statBar.querySelector('.bar-track');
-
-            const updateBar = (moveEvent) => {
-                const rect = track.getBoundingClientRect();
-                let newValue;
-
-                if (isVertical) {
-                    const y = moveEvent.clientY - rect.top;
-                    newValue = 100 - (y / rect.height) * 100;
-                } else {
-                    const x = moveEvent.clientX - rect.left;
-                    newValue = (x / rect.width) * 100;
-                }
-
-                newValue = Math.max(0, Math.min(100, newValue));
-                updateStatBar(statBar.id, newValue);
-                statTooltip.textContent = Math.round(newValue);
-            };
-
-            updateBar(e); // Update on initial click
-
-            const onMouseMove = (moveEvent) => {
-                updateBar(moveEvent);
-            };
-
-            const onMouseUp = () => {
-                document.removeEventListener('mousemove', onMouseMove);
-                document.removeEventListener('mouseup', onMouseUp);
-            };
-
-            document.addEventListener('mousemove', onMouseMove);
-            document.addEventListener('mouseup', onMouseUp);
-        });
-    });
-});
+// Instantiate to start
+const game = new GameController();
+// No export needed for simple script inclusion

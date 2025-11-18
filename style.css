@@ -1,0 +1,739 @@
+@import url('https://fonts.googleapis.com/css2?family=Comic+Sans+MS&family=Lexend+Deca&family=Hachi+Maru+Pop&display=swap');
+
+body {
+    display: grid;
+    grid-template-columns: repeat(16, 1fr);
+    grid-template-rows: repeat(12, 1fr);
+    height: 100vh;
+    margin: 0;
+    gap: 5px;
+    padding: 5px;
+    box-sizing: border-box;
+    background-color: #000;
+    font-size: 12pt;
+}
+
+div {
+    border-radius: 5px;
+    padding: 10px;
+    box-sizing: border-box;
+    color: #000;
+    font-weight: bold;
+    text-align: center;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+#menu-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 100;
+    cursor: pointer;
+}
+
+.hamburger-icon {
+    display: block;
+}
+
+.hamburger-icon span {
+    display: block;
+    width: 35px;
+    height: 5px;
+    background-color: white;
+    margin: 6px 0;
+}
+
+.close-icon {
+    display: none;
+    color: white;
+    font-size: 40px;
+}
+
+#prompt-bar { /* 1 */
+    grid-column: 14 / 17;
+    grid-row: 12 / 13;
+    display: flex;
+    align-items: center;
+    padding: 5px;
+}
+
+#prompt-input {
+    flex-grow: 1;
+    height: 100%;
+    border: none;
+    border-radius: 5px;
+    padding: 0 10px;
+    font-size: 1.125em;
+}
+
+#send-prompt {
+    height: 100%;
+    margin-left: 5px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#prompt-input:disabled, #send-prompt:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+#character-image { /* 2 */
+    grid-column: 14 / 17;
+    grid-row: 1 / 12;
+}
+
+#location-image, #intent-matrix, #player-options, #event_counter, #segment_counter {
+    display: block; /* Default state */
+}
+
+#location-image { /* 3 */
+    grid-column: 4 / 11;
+    grid-row: 1 / 7;
+}
+
+#npc-image { /* 4 */
+    grid-column: 1 / 4;
+    grid-row: 1 / 8;
+}
+
+#stats { /* 5 */
+    grid-column: 1 / 4;
+    grid-row: 8 / 13;
+}
+
+#intent-matrix { /* 6 */
+    grid-column: 4 / 8;
+    grid-row: 10 / 13;
+}
+
+#player-options { /* 7 */
+    grid-column: 8 / 14;
+    grid-row: 10 / 13;
+}
+
+#narrative-output { /* 8 */
+    grid-column: 4 / 14;
+    grid-row: 7 / 10;
+    overflow-y: auto;
+    word-wrap: break-word;
+}
+
+#event_counter { /* 9 */
+    grid-column: 11 / 14;
+    grid-row: 4 / 7;
+    color: #fff;
+}
+
+#segment_counter { /* 10 */
+    grid-column: 11 / 14;
+    grid-row: 1 / 4;
+}
+
+#menu-screen, #menu-options {
+    display: none; /* Hidden by default */
+}
+
+#menu-screen { /* 11 */
+    grid-column: 4 / 14;
+    grid-row: 2 / 12;
+}
+
+#menu-options { /* 12 */
+    grid-column: 4 / 14;
+    grid-row: 1 / 2;
+    justify-content: center;
+    align-items: center;
+}
+
+.icon {
+    margin: 0 15px;
+    cursor: pointer;
+    font-size: 2em;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease-in-out;
+}
+
+.icon:hover {
+    transform: scale(1.2);
+}
+
+#settings_module {
+    width: 100%;
+    color: white;
+    display: none; /* Hidden by default */
+}
+
+.settings-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+/* Menu Open State */
+body.menu-open .hamburger-icon {
+    display: none;
+}
+
+body.menu-open .close-icon {
+    display: block;
+}
+
+body.menu-open #location-image,
+body.menu-open #intent-matrix,
+body.menu-open #player-options,
+body.menu-open #event_counter,
+body.menu-open #segment_counter {
+    display: none;
+}
+
+body.menu-open #narrative-output {
+    grid-row: 12 / 13;
+    grid-column: 4 / 14;
+}
+
+body.menu-open #menu-screen,
+body.menu-open #menu-options {
+    display: flex;
+}
+
+body.menu-open #settings_module.active {
+    display: block;
+}
+
+#api-key-section {
+    margin-top: 20px;
+    padding: 10px 0;
+}
+
+.compact-api-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+#api-key-input {
+    width: 300px;
+    font-size: 1em;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    /* The visibility toggle is now a sibling, so no padding needed */
+}
+
+#toggle-api-key-visibility {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    padding: 0;
+    margin: 0;
+    line-height: 1; /* Aligns the icon better */
+}
+
+#storage-status {
+    font-size: 1em;
+    font-weight: normal;
+    color: white;
+    width: 70px; /* Give it a fixed width to prevent layout shifts */
+}
+
+#apply-api-key, #clear-api-key {
+    padding: 8px 15px;
+    font-size: 1em;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Toggle Switch Styles */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.toggle-switch input { display: none; }
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #4CAF50; /* Green for "Saved" */
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+.text-glow {
+    text-shadow: 0 0 5px #f5f5f5, 0 0 10px #f5f5f5;
+}
+
+.toggle-label {
+    vertical-align: middle;
+    margin: 0 5px;
+}
+
+/* --- Theme: RGB (Original) --- */
+.theme-rgb #prompt-bar { background-color: #ff0000; }
+.theme-rgb #character-image { background-color: #ffa500; }
+.theme-rgb #location-image { background-color: #ffff00; }
+.theme-rgb #npc-image { background-color: #00ff00; }
+.theme-rgb #stats { background-color: #00ffff; }
+.theme-rgb #intent-matrix { background-color: #ffffff; }
+.theme-rgb #player-options { background-color: #808080; }
+.theme-rgb #narrative-output { background-color: #ff00ff; }
+.theme-rgb #event_counter { background-color: #0000ff; }
+.theme-rgb #segment_counter { background-color: #ffc0cb; }
+.theme-rgb #menu-screen { background-color: #808080; }
+.theme-rgb #menu-options { background-color: #d3d3d3; }
+
+/* --- Theme: Default (Gradient) --- */
+.theme-default #prompt-bar,
+.theme-default #character-image,
+.theme-default #location-image,
+.theme-default #npc-image,
+.theme-default #stats,
+.theme-default #intent-matrix,
+.theme-default #player-options,
+.theme-default #narrative-output,
+.theme-default #event_counter,
+.theme-default #segment_counter,
+.theme-default #menu-screen,
+.theme-default #menu-options {
+    background-image: linear-gradient(to bottom right, #2E36AA, #502688, #FC90AF);
+}
+
+/* --- Theme: Pink (Gradient) --- */
+.theme-pink #prompt-bar,
+.theme-pink #character-image,
+.theme-pink #location-image,
+.theme-pink #npc-image,
+.theme-pink #stats,
+.theme-pink #intent-matrix,
+.theme-pink #player-options,
+.theme-pink #narrative-output,
+.theme-pink #event_counter,
+.theme-pink #segment_counter,
+.theme-pink #menu-screen,
+.theme-pink #menu-options {
+    background-image: linear-gradient(to bottom right, #FFC0CB, #FF69B4, #C71585);
+}
+
+/* --- Theme: Blue (Gradient) --- */
+.theme-blue #prompt-bar,
+.theme-blue #character-image,
+.theme-blue #location-image,
+.theme-blue #npc-image,
+.theme-blue #stats,
+.theme-blue #intent-matrix,
+.theme-blue #player-options,
+.theme-blue #narrative-output,
+.theme-blue #event_counter,
+.theme-blue #segment_counter,
+.theme-blue #menu-screen,
+.theme-blue #menu-options {
+    background-image: linear-gradient(to bottom right, #ADD8E6, #4169E1, #00008B);
+}
+
+/* --- Theme: Black (Gradient) --- */
+.theme-black #prompt-bar,
+.theme-black #character-image,
+.theme-black #location-image,
+.theme-black #npc-image,
+.theme-black #stats,
+.theme-black #intent-matrix,
+.theme-black #player-options,
+.theme-black #narrative-output,
+.theme-black #event_counter,
+.theme-black #segment_counter,
+.theme-black #menu-screen,
+.theme-black #menu-options {
+    background-image: linear-gradient(to bottom right, #696969, #2F4F4F);
+}
+
+/* --- Theme: White (Gradient) --- */
+.theme-white #prompt-bar,
+.theme-white #character-image,
+.theme-white #location-image,
+.theme-white #npc-image,
+.theme-white #stats,
+.theme-white #intent-matrix,
+.theme-white #player-options,
+.theme-white #narrative-output,
+.theme-white #event_counter,
+.theme-white #segment_counter,
+.theme-white #menu-screen,
+.theme-white #menu-options {
+    background-image: linear-gradient(to bottom right, #FFFFFF, #F5F5F5);
+}
+
+/* --- Save/Load Module Styles --- */
+
+#saveload_module {
+    color: white;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#new-game-button {
+    padding: 10px 20px;
+    font-size: 1.2em;
+    margin-bottom: 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    font-weight: bold;
+}
+
+#save-slots-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: hidden; /* For scrolling if content overflows */
+    max-height: calc(100% - 70px); /* Adjust based on container padding and button height */
+}
+
+.save-slot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    overflow-y: hidden;
+}
+
+.slot-info {
+    flex-grow: 1;
+    text-align: left;
+}
+
+.save-name-input {
+    background: none;
+    border: 1px solid #ccc;
+    color: white;
+    font-size: 1.1em;
+    padding: 5px;
+    border-radius: 3px;
+    margin-bottom: 5px;
+}
+
+.timestamp, .presets {
+    margin: 2px 0;
+    font-size: 0.9em;
+    color: #ddd;
+}
+
+.slot-actions button {
+    margin-left: 10px;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.slot-actions button:disabled {
+    background-color: #555;
+    cursor: not-allowed;
+}
+
+/* --- Stats UI --- */
+#stats {
+    padding: 5px; /* Compact padding */
+    display: flex;
+}
+
+.stats-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+    gap: 15px; /* Increased gap */
+}
+
+.horizontal-bars-container {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: 8px; /* Increased gap */
+    justify-content: space-between; /* Better distribution */
+}
+
+.stat-bar {
+    display: flex;
+    align-items: center;
+    position: relative; /* For tooltip positioning */
+}
+
+.stat-bar.horizontal {
+    flex-direction: row;
+    gap: 8px; /* Increased gap */
+}
+
+.stat-bar.vertical {
+    flex-direction: column;
+    justify-content: space-between; /* Pushes icon to bottom */
+    height: 100%;
+    gap: 8px; /* Increased gap */
+}
+
+.stat-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.bar-track {
+    background-color: #555;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid #000; /* Add a thin black outline */
+}
+
+.horizontal .bar-track {
+    width: 100%;
+    height: 18px; /* Taller bars */
+}
+
+.vertical .bar-track {
+    width: 18px; /* Thicker bar */
+    height: 100%;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column-reverse; /* To make the fill go from bottom to top */
+}
+
+.bar-fill {
+    height: 100%;
+    width: 0%; /* Default to 0% fill */
+    border-radius: 10px;
+    transition: width 0.5s ease-in-out, height 0.5s ease-in-out;
+}
+
+.vertical .bar-fill {
+    width: 100%;
+    height: 0%; /* Default to 0% fill for vertical */
+}
+
+/* --- Shine Effect for a "Candy-like" Appearance --- */
+.bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.1) 50%, transparent 50%);
+    border-radius: 10px;
+}
+
+/* --- Stat-specific colors for the bar fill --- */
+#stat-vitality .bar-fill { background-color: #00B0F0; } /* Blue */
+#stat-will .bar-fill { background-color: #7030A0; }      /* Purple */
+#stat-nba .bar-fill { background-color: #FF1493; }       /* Pink */
+#stat-awareness .bar-fill { background-color: #FFA500; }  /* Orange */
+#stat-socialpressure .bar-fill { background-color: #FFFF00; }/* Yellow */
+#stat-grace .bar-fill { background-color: #E6B8B8; }    /* Light Pink */
+#stat-danger .bar-fill { background-color: #000000; }     /* Black */
+#stat-friendship .bar-fill { background-color: #00B050; }  /* Green */
+#stat-attraction .bar-fill { background-color: #FF0000; }   /* Red */
+#stat-temperature .bar-fill {
+    background-image: linear-gradient(to top, #00B0F0, #FF0000); /* Blue to Red */
+}
+
+
+/* --- Tooltip Styles --- */
+[data-tooltip] {
+    position: relative;
+}
+
+[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 110%; /* Position above the element */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.9em;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+    z-index: 10;
+}
+
+[data-tooltip]:hover::after {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Override the global div padding for all elements within the stats container */
+#stats div {
+    padding: 0;
+}
+
+/* --- Conditional Outline for Black Theme --- */
+.theme-black .bar-track {
+    border: 1px solid #fff; /* White outline on black theme */
+}
+
+/* --- Intent Matrix Styles --- */
+#intent-matrix {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 7px;
+    overflow: hidden; /* Prevent scrollbars and hide overflow */
+    color: #fff; /* Set default text color for children */
+}
+
+#intent-matrix div {
+    overflow-y: hidden;
+}
+
+.intent-controls {
+    display: flex;
+    align-items: center;
+    gap: 30px; /* Increased gap between circle and slider */
+    width: 100%;
+    height: 100%;
+}
+
+.intent-circle-container {
+    position: relative;
+    height: 100%;
+    aspect-ratio: 1 / 1; /* Maintain a square aspect ratio */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#intent-circle {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.intent-circle-container .segment {
+    fill: #808080; /* Grey color for segments */
+    stroke: #000;
+    stroke-width: 2;
+    cursor: pointer;
+    transition: fill 0.2s ease-in-out;
+}
+
+.intent-circle-container .segment:hover {
+    fill: #a0a0a0; /* Lighter grey on hover */
+}
+
+.intent-circle-container .segment.selected {
+    fill: #ffff00; /* Yellow when selected */
+}
+
+.intent-circle-container .segment-label {
+    font-size: 12px;
+    font-weight: bold;
+    fill: #000;
+    text-anchor: middle;
+    pointer-events: none; /* Make text non-interactive */
+    text-transform: uppercase;
+}
+
+#intent-submit-button {
+    position: relative; /* It's inside a flex container now */
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid #000;
+    background-color: #fff;
+    font-weight: bold;
+    font-size: 1em;
+    cursor: pointer;
+    z-index: 10;
+    color: #000;
+}
+
+.intent-slider-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    height: 100%; /* Match circle container height */
+}
+
+.slider-track {
+    position: relative;
+    width: 20px;
+    height: 100%;
+    background-color: #333;
+    border-radius: 10px;
+    border: 2px solid #000;
+    overflow: hidden;
+}
+
+.slider-indicator {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 15px;
+    background-color: #ff00ff; /* Magenta */
+    border-radius: 8px;
+    border: 1px solid #000;
+    top: 5px; /* Initial position at the top */
+    transition: top 0.3s ease-in-out;
+}
+
+.slider-labels {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 100%;
+    font-size: 1em;
+    font-weight: normal;
+}
+
+.slider-labels span {
+    cursor: pointer;
+    padding: 2px 5px;
+}

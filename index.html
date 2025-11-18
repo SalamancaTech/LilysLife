@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lily's Life</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="menu-button">
+        <div class="hamburger-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="close-icon">&times;</div>
+    </div>
+
+    <div id="prompt-bar">
+        <input type="text" id="prompt-input" placeholder="Enter your prompt...">
+        <button id="send-prompt">Send</button>
+    </div>
+    <div id="character-image">Character Image</div>
+    <div id="location-image">Location Image</div>
+    <div id="npc-image">NPC Image</div>
+    <div id="stats">
+        <div class="stats-container">
+            <div class="stat-bar vertical" id="stat-temperature" data-tooltip="Temperature">
+                <div class="bar-track">
+                    <div class="bar-fill"></div>
+                </div>
+                <img src="assets/icons/stat_TEMPERATURE.png" class="stat-icon" alt="Temperature Icon">
+            </div>
+            <div class="horizontal-bars-container">
+                <div class="stat-bar horizontal" id="stat-vitality" data-tooltip="Vitality">
+                    <img src="assets/icons/stat_VITALITY.png" class="stat-icon" alt="Vitality Icon">
+                    <div class="bar-track">
+                        <div class="bar-fill"></div>
+                    </div>
+                </div>
+                <div class="stat-bar horizontal" id="stat-will" data-tooltip="Will">
+                    <img src="assets/icons/stat_WILL.png" class="stat-icon" alt="Will Icon">
+                    <div class="bar-track">
+                        <div class="bar-fill"></div>
+                    </div>
+                </div>
+                <div class="stat-bar horizontal" id="stat-nba" data-tooltip="NBA">
+                    <img src="assets/icons/stat_NBA.png" class="stat-icon" alt="NBA Icon">
+                    <div class="bar-track">
+                        <div class="bar-fill"></div>
+                    </div>
+                </div>
+                <div class="stat-bar horizontal" id="stat-awareness" data-tooltip="Awareness">
+                    <img src="assets/icons/stat_AWARENESS.png" class="stat-icon" alt="Awareness Icon">
+                    <div class="bar-track">
+                        <div class="bar-fill"></div>
+                    </div>
+                </div>
+                <div class="stat-bar horizontal" id="stat-socialpressure" data-tooltip="Social Pressure">
+                    <img src="assets/icons/stat_SOCIALPRESSURE.png" class="stat-icon" alt="Social Pressure Icon">
+                    <div class="bar-track">
+                        <div class="bar-fill"></div>
+                    </div>
+                </div>
+                <div class="stat-bar horizontal" id="stat-grace" data-tooltip="Grace">
+                    <img src="assets/icons/stat_GRACE.png" class="stat-icon" alt="Grace Icon">
+                    <div class="bar-track">
+                        <div class="bar-fill"></div>
+                    </div>
+                </div>
+                <div class="stat-bar horizontal" id="stat-danger" data-tooltip="Danger">
+                    <img src="assets/icons/stat_DANGER.png" class="stat-icon" alt="Danger Icon">
+                    <div class="bar-track">
+                        <div class="bar-fill"></div>
+                    </div>
+                </div>
+                <div class="stat-bar horizontal" id="stat-friendship" data-tooltip="Friendship">
+                    <img src="assets/icons/stat_FRIENDSHIP.png" class="stat-icon" alt="Friendship Icon">
+                    <div class="bar-track">
+                        <div class="bar-fill"></div>
+                    </div>
+                </div>
+                <div class="stat-bar horizontal" id="stat-attraction" data-tooltip="Attraction">
+                    <img src="assets/icons/stat_ATTRACTION.png" class="stat-icon" alt="Attraction Icon">
+                    <div class="bar-track">
+                        <div class="bar-fill"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="intent-matrix">
+      <div class="intent-controls">
+        <div class="intent-circle-container">
+          <svg id="intent-circle" viewBox="0 0 200 200">
+            <!-- Segments will be added here -->
+          </svg>
+          <button id="intent-submit-button">GO</button>
+        </div>
+        <div class="intent-slider-container">
+          <div class="slider-track">
+            <div class="slider-indicator"></div>
+          </div>
+          <div class="slider-labels">
+            <span>Neutral</span>
+            <span>Curious</span>
+            <span>Serious</span>
+            <span>Sarcastic</span>
+            <span>Humorous</span>
+            <span>Teasing</span>
+            <span>Flirty</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="player-options">Player Options</div>
+    <div id="narrative-output">Narrative Output</div>
+    <div id="event_counter">Event Counter</div>
+    <div id="segment_counter">Segment Counter</div>
+
+    <div id="menu-screen" class="hidden">
+        <div id="settings_module">
+            <h2>Settings</h2>
+
+            <div class="settings-section">
+                <h3>Theme</h3>
+                <div class="settings-row">
+                    <label for="theme-select">Style:</label>
+                    <select name="themes" id="theme-select">
+                      <option value="Default" selected>Default</option>
+                      <option value="Pink">Pink</option>
+                      <option value="Blue">Blue</option>
+                      <option value="Black">Black</option>
+                      <option value="White">White</option>
+                      <option value="RGB">RGB</option>
+                      <option value="Trans">Trans</option>
+                      <option value="Black">Black</option>
+                      <option value="White">White</option>
+                      <option value="Cute">Cute</option>
+                      <option value="RGB">RGB</option>
+                      <option value="Colorblind">Colorblind</option>
+                    </select>
+
+                    <label for="font-select">Font:</label>
+                    <select name="fonts" id="font-select">
+                      <option value="'Hachi Maru Pop', cursive">Hachi Maru Pop</option>
+                      <option value="Georgia, serif">Georgia</option>
+                      <option value="Arial, sans-serif">Arial</option>
+                      <option value="'Courier New', monospace">Courier New</option>
+                      <option value="'Comic Sans MS', cursive">Comic Sans</option>
+                      <option value="'Lexend Deca', sans-serif">Lexend Deca</option>
+                    </select>
+
+                    <label for="font-size-select">Size:</label>
+                    <select name="font-sizes" id="font-size-select">
+                      <option value="6pt">Smallest</option>
+                      <option value="9pt">Small</option>
+                      <option value="12pt" selected>Normal</option>
+                      <option value="15pt">Large</option>
+                      <option value="18pt">Largest</option>
+                    </select>
+
+                    <label for="glow-toggle">Glow:</label>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="glow-toggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3>Spiciness</h3>
+                <div class="settings-row">
+                    <label for="events-toggle">Events:</label>
+                    <span class="toggle-label">SFW only</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="events-toggle">
+                        <span class="slider"></span>
+                    </label>
+                    <span class="toggle-label">ALL</span>
+
+                    <label for="nsfw-level-toggle">NSFW Level:</label>
+                    <span class="toggle-label">Light</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="nsfw-level-toggle">
+                        <span class="slider"></span>
+                    </label>
+                    <span class="toggle-label">Full</span>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3>API</h3>
+                <div id="api-key-section">
+                    <h4>Gemini API Key</h4>
+                    <div class="compact-api-controls">
+                        <input type="password" id="api-key-input" placeholder="Enter your API key">
+                        <button id="toggle-api-key-visibility">👁️</button>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="api-key-storage-toggle">
+                            <span class="slider"></span>
+                        </label>
+                        <span id="storage-status">Unsaved</span>
+                        <button id="apply-api-key">Apply</button>
+                        <button id="clear-api-key">Clear</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="saveload_module" style="display: none;">
+            <button id="new-game-button">New Game</button>
+            <div id="save-slots-container">
+                <!-- Save slots will be dynamically generated here -->
+            </div>
+        </div>
+    </div>
+    <div id="menu-options" class="hidden">
+        <div class="icon">🗺️</div>
+        <div class="icon">🎒</div>
+        <div class="icon">🧑‍🤝‍🧑</div>
+        <div class="icon">💰</div>
+        <div class="icon">📔</div>
+        <div class="icon" id="saveload-icon">💾</div>
+        <div class="icon" id="settings-icon">⚙️</div>
+    </div>
+
+    <script type="module">
+        import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
+        window.GoogleGenerativeAI = GoogleGenerativeAI;
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>

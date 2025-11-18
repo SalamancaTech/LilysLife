@@ -37,6 +37,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const sendPromptButton = document.getElementById('send-prompt');
     const narrativeOutput = document.getElementById('narrative-output');
 
+    // Player Options
+    const playerOptionsContainer = document.getElementById('player-options-cells-container');
+    const playerOptionsSubmit = document.getElementById('player-options-submit');
+
     // --- Functions ---
 
     const saveSettings = () => {
@@ -426,16 +430,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updatePromptBarState();
 
-    // --- Initialize Stats with Placeholder Values ---
-    const stats = [
-        'stat-vitality', 'stat-will', 'stat-nba', 'stat-awareness',
-        'stat-socialpressure', 'stat-grace', 'stat-danger',
-        'stat-friendship', 'stat-attraction', 'stat-temperature'
-    ];
+    // --- Player Options Logic ---
+    playerOptionsContainer.addEventListener('click', (e) => {
+        const targetCell = e.target.closest('.player-option-cell');
+        if (!targetCell) return; // Ignore clicks that aren't on a cell
 
-    stats.forEach(stat => {
-        const randomValue = Math.floor(Math.random() * 101);
-        updateStatBar(stat, randomValue);
+        // Deselect any currently selected cell
+        const previouslySelected = playerOptionsContainer.querySelector('.selected');
+        if (previouslySelected) {
+            previouslySelected.classList.remove('selected');
+        }
+
+        // Select the clicked cell
+        targetCell.classList.add('selected');
+    });
+
+    playerOptionsSubmit.addEventListener('click', () => {
+        const selectedCell = playerOptionsContainer.querySelector('.selected');
+        if (selectedCell) {
+            console.log(`Submitted option: ${selectedCell.id}`);
+            alert(`You selected: ${selectedCell.textContent || 'the player input option'}`);
+            // Future logic to send the selection will go here
+        } else {
+            alert('Please select an option first.');
+        }
     });
 
     // --- Intent Matrix ---

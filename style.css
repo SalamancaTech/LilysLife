@@ -116,6 +116,41 @@ div {
 #player-options { /* 7 */
     grid-column: 8 / 14;
     grid-row: 10 / 13;
+    display: flex;
+    flex-direction: column;
+    padding: 5px; /* Add some padding to contain the cells */
+    gap: 5px; /* This will create the 5px margin between cells */
+}
+.player-option-cell {
+    flex: 1; /* Distribute space equally */
+    background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent white */
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for floating effect */
+    overflow-y: auto; /* Enable scrollbar if content overflows */
+    padding: 10px; /* Internal padding for text */
+    text-align: left; /* Left-justify text */
+    color: #fff; /* White text color for readability on dark themes */
+}
+/* Ensure cells inherit theme colors correctly under different themes */
+.theme-default .player-option-cell,
+.theme-pink .player-option-cell,
+.theme-blue .player-option-cell {
+    /* The cells will inherit the gradient from the parent, no specific color needed */
+    /* Add a subtle border to make them distinct */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.theme-black .player-option-cell {
+    background-color: rgba(70, 70, 70, 0.5); /* Darker semi-transparent background */
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+.theme-white .player-option-cell {
+    background-color: rgba(230, 230, 230, 0.8); /* Lighter semi-transparent background */
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: #000; /* Black text for readability on light theme */
+}
+.theme-rgb .player-option-cell {
+    background-color: rgba(128, 128, 128, 0.5); /* A neutral grey for the RGB theme */
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 #narrative-output { /* 8 */

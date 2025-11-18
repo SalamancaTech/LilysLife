@@ -11,6 +11,7 @@ body {
     box-sizing: border-box;
     background-color: #000;
     font-size: 12pt;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 div {
@@ -730,6 +731,7 @@ input:checked + .slider:before {
     height: 100%;
     font-size: 1em;
     font-weight: normal;
+    position: relative; /* Establish positioning context for offsetTop calculation */
 }
 
 .slider-labels span {

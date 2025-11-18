@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div id="stat-tooltip" class="hidden"></div>
     <div id="menu-button">
         <div class="hamburger-icon">
             <span></span>
@@ -87,6 +88,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
     <div id="intent-matrix">
@@ -213,6 +215,16 @@
                         <button id="apply-api-key">Apply</button>
                         <button id="clear-api-key">Clear</button>
                     </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <div class="settings-row">
+                    <label for="dev-mode-toggle">Developer Mode:</label>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="dev-mode-toggle">
+                        <span class="slider"></span>
+                    </label>
                 </div>
             </div>
         </div>

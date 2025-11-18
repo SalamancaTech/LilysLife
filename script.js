@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let apiKey = null;
 
     // --- DOM Elements ---
+    const devModeToggle = document.getElementById('dev-mode-toggle');
     // Menu & Settings
     const menuButton = document.getElementById('menu-button');
     const body = document.body;
@@ -647,27 +648,25 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         resetIntentMatrix();
     }, 100);
-});
 
-// --- Stats UI ---
+    // --- Stats UI ---
 
-function updateStatBar(statId, value) {
-    const statBar = document.getElementById(statId);
-    if (statBar) {
-        const barFill = statBar.querySelector('.bar-fill');
-        if (barFill) {
-            const percentage = Math.max(0, Math.min(100, value)); // Clamp value between 0 and 100
-            if (statBar.classList.contains('vertical')) {
-                barFill.style.height = `${percentage}%`;
-            } else {
-                barFill.style.width = `${percentage}%`;
+    function updateStatBar(statId, value) {
+        const statBar = document.getElementById(statId);
+        if (statBar) {
+            const barFill = statBar.querySelector('.bar-fill');
+            if (barFill) {
+                const percentage = Math.max(0, Math.min(100, value)); // Clamp value between 0 and 100
+                if (statBar.classList.contains('vertical')) {
+                    barFill.style.height = `${percentage}%`;
+                } else {
+                    barFill.style.width = `${percentage}%`;
+                }
             }
         }
     }
-}
 
-// --- Initialize Stats with Placeholder Values ---
-document.addEventListener('DOMContentLoaded', () => {
+    // --- Initialize Stats with Placeholder Values ---
     const stats = [
         'stat-vitality', 'stat-will', 'stat-nba', 'stat-awareness',
         'stat-socialpressure', 'stat-grace', 'stat-danger',
@@ -677,5 +676,79 @@ document.addEventListener('DOMContentLoaded', () => {
     stats.forEach(stat => {
         const randomValue = Math.floor(Math.random() * 101);
         updateStatBar(stat, randomValue);
+    });
+
+    // --- Stat Tooltip & Dragging ---
+    const statTooltip = document.getElementById('stat-tooltip');
+    const statBars = document.querySelectorAll('.stat-bar');
+
+    devModeToggle.addEventListener('change', () => {
+        document.body.classList.toggle('dev-mode-active', devModeToggle.checked);
+    });
+
+    statBars.forEach(statBar => {
+        const barFill = statBar.querySelector('.bar-fill');
+
+        const getStatValue = () => {
+            const isVertical = statBar.classList.contains('vertical');
+            const style = isVertical ? barFill.style.height : barFill.style.width;
+            return parseInt(style, 10) || 0;
+        };
+
+        statBar.addEventListener('mouseenter', (e) => {
+            const value = getStatValue();
+            statTooltip.textContent = value;
+            statTooltip.classList.remove('hidden');
+        });
+
+        statBar.addEventListener('mouseleave', () => {
+            statTooltip.classList.add('hidden');
+        });
+
+        statBar.addEventListener('mousemove', (e) => {
+            // Position the tooltip slightly above and to the right of the cursor
+            statTooltip.style.left = `${e.pageX + 10}px`;
+            statTooltip.style.top = `${e.pageY - 20}px`;
+        });
+
+        statBar.addEventListener('mousedown', (e) => {
+            if (!devModeToggle.checked) return;
+
+            e.preventDefault(); // Prevent text selection
+
+            const isVertical = statBar.classList.contains('vertical');
+            const track = statBar.querySelector('.bar-track');
+
+            const updateBar = (moveEvent) => {
+                const rect = track.getBoundingClientRect();
+                let newValue;
+
+                if (isVertical) {
+                    const y = moveEvent.clientY - rect.top;
+                    newValue = 100 - (y / rect.height) * 100;
+                } else {
+                    const x = moveEvent.clientX - rect.left;
+                    newValue = (x / rect.width) * 100;
+                }
+
+                newValue = Math.max(0, Math.min(100, newValue));
+                updateStatBar(statBar.id, newValue);
+                statTooltip.textContent = Math.round(newValue);
+            };
+
+            updateBar(e); // Update on initial click
+
+            const onMouseMove = (moveEvent) => {
+                updateBar(moveEvent);
+            };
+
+            const onMouseUp = () => {
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+            };
+
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
+        });
     });
 });

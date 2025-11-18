@@ -614,6 +614,7 @@ input:checked + .slider:before {
 }
 
 .bar-fill {
+    position: relative; /* Needed for the indicator pseudo-element */
     height: 100%;
     width: 0%; /* Default to 0% fill */
     border-radius: 10px;
@@ -623,6 +624,38 @@ input:checked + .slider:before {
 .vertical .bar-fill {
     width: 100%;
     height: 0%; /* Default to 0% fill for vertical */
+}
+
+/* --- Stat Bar Indicator --- */
+.bar-fill::before {
+    content: '';
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white */
+    box-shadow: 0 0 2px #000; /* Add a slight shadow to make it stand out */
+}
+
+.horizontal .bar-fill::before {
+    top: -3px; /* Position it slightly outside the bar */
+    bottom: -3px;
+    right: -2px; /* Position at the end of the fill */
+    width: 4px;
+    border-radius: 2px;
+}
+
+.vertical .bar-fill::before {
+    left: -3px;
+    right: -3px;
+    top: -2px; /* Position at the top end of the fill */
+    height: 4px;
+    border-radius: 2px;
+}
+
+.dev-mode-active .stat-bar {
+    cursor: ew-resize; /* Horizontal drag cursor */
+}
+
+.dev-mode-active .stat-bar.vertical {
+    cursor: ns-resize; /* Vertical drag cursor */
 }
 
 /* --- Shine Effect for a "Candy-like" Appearance --- */
@@ -813,4 +846,26 @@ input:checked + .slider:before {
 
 .selected-label {
     color: yellow;
+}
+
+/* --- Stat Value Tooltip --- */
+#stat-tooltip {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background-color: lightgrey;
+    border: 2px solid black;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1em;
+    font-weight: bold;
+    color: black;
+    pointer-events: none; /* The tooltip should not interfere with mouse events */
+    z-index: 110; /* Make sure it's on top of other elements */
+}
+
+.hidden {
+    display: none;
 }

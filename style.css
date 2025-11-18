@@ -708,6 +708,7 @@ input:checked + .slider:before {
     background-color: #333;
     border-radius: 10px;
     border: 2px solid #000;
+    overflow: hidden;
 }
 
 .slider-indicator {
@@ -715,9 +716,9 @@ input:checked + .slider:before {
     left: 50%;
     transform: translateX(-50%);
     width: 30px;
-    height: 30px;
+    height: 15px;
     background-color: #ff00ff; /* Magenta */
-    border-radius: 50%;
+    border-radius: 8px;
     border: 1px solid #000;
     top: 5px; /* Initial position at the top */
     transition: top 0.3s ease-in-out;
@@ -735,8 +736,4 @@ input:checked + .slider:before {
 .slider-labels span {
     cursor: pointer;
     padding: 2px 5px;
-}
-
-.selected-label {
-    color: yellow;
 }
